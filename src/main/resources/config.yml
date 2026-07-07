@@ -108,6 +108,14 @@ nametag:
   # There's no LuckPerms hook available (prefixes come from the MiniPlaceholders-LuckPerms
   # expansion, not the LuckPerms API directly), so prefix changes are only picked up this often.
   refresh-interval-seconds: 30
+  guild-tag:
+    # Only shown while the player is in a guild - a second line above the normal nametag, rendered
+    # via a fake TEXT_DISPLAY entity (there's no vanilla way to stack a second line on a player's
+    # own nametag). <tag> is the guild's tag.
+    format: "<gray>[<tag>]</gray>"
+    # How far above the player's head this second line floats. Vanilla doesn't expose the exact
+    # height a passenger-mounted entity rides at, so this may need visual tuning in-game.
+    y-offset: 0.09
 
 tablist:
   enabled: true
