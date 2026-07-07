@@ -77,7 +77,7 @@ chat:
   # <luckperms_prefix>/<luckperms_suffix> require the MiniPlaceholders-LuckPerms expansion plugin
   # to be installed alongside MiniPlaceholders - remove them here if that expansion isn't installed,
   # otherwise MiniMessage will fail to parse the unknown tag on every chat message.
-  format: "<guild_segment><luckperms_prefix><white><player_name></white><dark_gray>:</dark_gray> <gray><message>"
+  format: "<guild_segment><luckperms_prefix><reset><white><player_name></white><dark_gray>:</dark_gray> <white><message>"
   guild-chat-format: "<dark_aqua>[G]</dark_aqua> <gray>[<guild_tag>]</gray> <white><player_name></white><dark_gray>:</dark_gray> <aqua><message>"
   # Used to build <guild_segment> only when the player is in a guild; include the trailing space
   # yourself so the no-guild case can omit both the brackets and the space cleanly.
@@ -115,7 +115,7 @@ nametag:
     format: "<gray>[<tag>]</gray>"
     # How far above the player's head this second line floats. Vanilla doesn't expose the exact
     # height a passenger-mounted entity rides at, so this may need visual tuning in-game.
-    y-offset: 0.09
+    y-offset: 0.55
 
 tablist:
   enabled: true
