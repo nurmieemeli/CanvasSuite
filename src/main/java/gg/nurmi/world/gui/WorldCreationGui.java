@@ -28,7 +28,6 @@ public final class WorldCreationGui extends AbstractGui {
     private static final int SEED_SLOT = 22;
     private static final int STRUCTURES_SLOT = 23;
     private static final int HARDCORE_SLOT = 24;
-    private static final int KEEP_SPAWN_SLOT = 29;
     private static final int DIFFICULTY_SLOT = 30;
     private static final int PVP_SLOT = 31;
     private static final int CREATE_SLOT = 49;
@@ -98,11 +97,6 @@ public final class WorldCreationGui extends AbstractGui {
 
         setButton(HARDCORE_SLOT, booleanToggle(Material.SKELETON_SKULL, "Hardcore", settings.hardcore()), event -> {
             settings.toggleHardcore();
-            reopen(event);
-        });
-
-        setButton(KEEP_SPAWN_SLOT, booleanToggle(Material.BEACON, "Keep Spawn In Memory", settings.keepSpawnInMemory()), event -> {
-            settings.toggleKeepSpawnInMemory();
             reopen(event);
         });
 

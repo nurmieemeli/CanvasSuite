@@ -21,12 +21,11 @@ public final class WorldSettings {
     private long seed;
     private boolean generateStructures;
     private boolean hardcore;
-    private boolean keepSpawnInMemory;
     private Difficulty difficulty;
     private boolean pvp;
 
     public WorldSettings(String name, World.Environment environment, WorldType type, GeneratorMode generatorMode,
-                          long seed, boolean generateStructures, boolean hardcore, boolean keepSpawnInMemory,
+                          long seed, boolean generateStructures, boolean hardcore,
                           Difficulty difficulty, boolean pvp) {
         this.name = name;
         this.environment = environment;
@@ -35,7 +34,6 @@ public final class WorldSettings {
         this.seed = seed;
         this.generateStructures = generateStructures;
         this.hardcore = hardcore;
-        this.keepSpawnInMemory = keepSpawnInMemory;
         this.difficulty = difficulty;
         this.pvp = pvp;
     }
@@ -66,10 +64,6 @@ public final class WorldSettings {
 
     public boolean hardcore() {
         return hardcore;
-    }
-
-    public boolean keepSpawnInMemory() {
-        return keepSpawnInMemory;
     }
 
     public Difficulty difficulty() {
@@ -116,10 +110,6 @@ public final class WorldSettings {
 
     public void toggleHardcore() {
         hardcore = !hardcore;
-    }
-
-    public void toggleKeepSpawnInMemory() {
-        keepSpawnInMemory = !keepSpawnInMemory;
     }
 
     public void togglePvp() {

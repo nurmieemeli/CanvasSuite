@@ -126,7 +126,6 @@ world-creation:
     generator: VANILLA        # VANILLA or VOID
     generate-structures: true
     hardcore: false
-    keep-spawn-in-memory: true
     difficulty: NORMAL
     pvp: true
 

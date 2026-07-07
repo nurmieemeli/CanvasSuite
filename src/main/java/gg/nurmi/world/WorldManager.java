@@ -71,17 +71,28 @@ public final class WorldManager {
     public void deleteWorld(String name, boolean wipeFiles, Consumer<Boolean> onDone) {
         plugin.scheduler().runGlobal(() -> {
             World world = Bukkit.getWorld(name);
-            File folder = world != null ? world.getWorldFolder() : new File(Bukkit.getWorldContainer(), name);
-            boolean unloaded = world == null || Bukkit.unloadWorld(world, false);
-
-            managed.remove(name);
-            save();
-
-            boolean wiped = true;
-            if (unloaded && wipeFiles) {
-                wiped = deleteRecursively(folder.toPath());
+            if (world == null) {
+                managed.remove(name);
+                save();
+                onDone.accept(true);
+                return;
             }
-            onDone.accept(unloaded && (!wipeFiles || wiped));
+
+            File folder = world.getWorldFolder();
+            Bukkit.unloadWorldAsync(world, false, unloaded -> {
+                managed.remove(name);
+                save();
+
+                if (!unloaded) {
+                    onDone.accept(false);
+                    return;
+                }
+                if (!wipeFiles) {
+                    onDone.accept(true);
+                    return;
+                }
+                plugin.scheduler().runAsync(() -> onDone.accept(deleteRecursively(folder.toPath())));
+            });
         });
     }
 
@@ -93,8 +104,7 @@ public final class WorldManager {
                     .type(settings.type())
                     .seed(settings.seed())
                     .generateStructures(settings.generateStructures())
-                    .hardcore(settings.hardcore())
-                    .keepSpawnInMemory(settings.keepSpawnInMemory());
+                    .hardcore(settings.hardcore());
             if (settings.generatorMode() == GeneratorMode.VOID) {
                 creator.generator(new VoidChunkGenerator());
             }
@@ -152,13 +162,12 @@ public final class WorldManager {
                 ? GeneratorMode.VOID : GeneratorMode.VANILLA;
         boolean generateStructures = defaults == null || defaults.getBoolean("generate-structures", true);
         boolean hardcore = defaults != null && defaults.getBoolean("hardcore", false);
-        boolean keepSpawnInMemory = defaults == null || defaults.getBoolean("keep-spawn-in-memory", true);
         Difficulty difficulty = parseDifficulty(configString(defaults, "difficulty", "NORMAL"));
         boolean pvp = defaults == null || defaults.getBoolean("pvp", true);
         long seed = fixedSeed != null ? fixedSeed : ThreadLocalRandom.current().nextLong();
 
         WorldSettings settings = new WorldSettings(name, environment, type, generatorMode, seed,
-                generateStructures, hardcore, keepSpawnInMemory, difficulty, pvp);
+                generateStructures, hardcore, difficulty, pvp);
         pendingSessions.put(admin, settings);
         return settings;
     }
@@ -223,7 +232,6 @@ public final class WorldManager {
                     section.getLong("seed", 0L),
                     section.getBoolean("generate-structures", true),
                     section.getBoolean("hardcore", false),
-                    section.getBoolean("keep-spawn-in-memory", true),
                     parseDifficulty(section.getString("difficulty", "NORMAL")),
                     section.getBoolean("pvp", true));
             managed.put(key, settings);
@@ -240,7 +248,6 @@ public final class WorldManager {
             config.set(base + ".seed", settings.seed());
             config.set(base + ".generate-structures", settings.generateStructures());
             config.set(base + ".hardcore", settings.hardcore());
-            config.set(base + ".keep-spawn-in-memory", settings.keepSpawnInMemory());
             config.set(base + ".difficulty", settings.difficulty().name());
             config.set(base + ".pvp", settings.pvp());
         }
