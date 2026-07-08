@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-An all-in-one SMP plugin for <a href="https://canvasmc.io/">CanvasMC</a> servers — economy, shops, teleportation, random teleport, guilds, chat formatting, world creation, a void spawn world, moderator tools, private messaging, packet-driven nametags/tablist, a sidebar scoreboard, and world protection, all in a single jar with a chest-GUI front end wherever one makes sense.
+An all-in-one SMP plugin for <a href="https://canvasmc.io/">CanvasMC</a> servers — economy, shops, teleportation, random teleport, guilds, chat formatting, world creation, a void spawn world, moderator tools, private messaging, packet-driven nametags/tablist, a sidebar scoreboard, player stats with leaderboard holograms, and world protection, all in a single jar with a chest-GUI front end wherever one makes sense.
 </p>
 
 <p align="center">
@@ -36,6 +36,7 @@ An all-in-one SMP plugin for <a href="https://canvasmc.io/">CanvasMC</a> servers
 | [MiniPlaceholders-LuckPerms expansion](https://github.com/MiniPlaceholders/MiniPlaceholders) | ➖ | Optional — install alongside MiniPlaceholders if you want `<luckperms_prefix>`/`<luckperms_suffix>` to resolve in chat, nametags, and the scoreboard |
 | [LuckPerms](https://luckperms.net/) | ➖ | Optional, soft-depended directly (not just through MiniPlaceholders) — used to sort the tablist by each player's effective group weight, highest first |
 | [Vault](https://www.spigotmc.org/resources/vault.34315/) | ➖ | Optional — if present, CanvasSuite registers itself as the Vault economy provider so other plugins can use its currency |
+| [FancyHolograms](https://modrinth.com/plugin/fancyholograms) | ➖ | Optional, soft-depended — powers `/statshologram` leaderboard holograms. `/statshologram` replies with a clear message instead of erroring if it's not installed |
 | MySQL server | ➖ | Optional — falls back to a local SQLite file automatically |
 
 All player-facing text is rendered with [Adventure MiniMessage](https://docs.advntr.dev/minimessage/format.html) and supports [MiniPlaceholders](https://github.com/MiniPlaceholders/MiniPlaceholders) tags (global, audience, and relational placeholders) in every configurable message and chat format.
@@ -104,9 +105,24 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 - All of the above requires the PacketEvents plugin; without it, nametags/reserved-slot filling are silently disabled (tablist header/footer still work — they use native Paper API, not packets).
 - Prefixes/suffixes resolve purely through the MiniPlaceholders-LuckPerms expansion, so permission-group changes there are picked up on a periodic refresh, not instantly. The tablist's weight-based sorting is the one place CanvasSuite talks to the LuckPerms API directly (soft-depended, via `LuckPermsProvider`) — that's a live lookup on every join/quit, not cached.
 
+### 📈 Player Stats
+- Tracks kills, deaths, current & best killstreak, and playtime per player, persisted to the same storage backend as everything else.
+- `/stats [player]` — kills, deaths, K/D ratio, current & best killstreak, and playtime for yourself or another player (online or offline).
+- `/statstop <kills|deaths|killstreak|playtime>` opens a paginated leaderboard GUI for any of the four tracked stats.
+- Reaching a configurable killstreak milestone (`stats.killstreak-broadcast-milestones` in `config.yml`, default `5, 10, 25, 50, 100`) triggers a server-wide broadcast.
+- Playtime accrues live per session and is flushed to storage periodically (`stats.playtime-autosave-interval-seconds`) plus on quit and server shutdown, so a crash loses at most one autosave interval.
+- Exposed as MiniPlaceholders tags usable anywhere MiniMessage is rendered — chat, tablist, nametags, the scoreboard below: `<stats_kills>`, `<stats_deaths>`, `<stats_kd>`, `<stats_killstreak>`, `<stats_best_killstreak>`, `<stats_playtime>`.
+
+### 🏆 Leaderboard Holograms
+- Optional integration with [FancyHolograms](https://modrinth.com/plugin/fancyholograms): `/statshologram create <kills|deaths|killstreak|playtime> <name> [limit]` drops a text hologram at your current location that's periodically repopulated with the live leaderboard for that stat (`limit` caps how many entries show, default 10, max 45).
+- `/statshologram remove <name>` and `/statshologram list` manage existing leaderboard holograms.
+- FancyHolograms owns the hologram entity itself — its location and persistence across restarts are handled entirely by FancyHolograms' own storage; CanvasSuite only remembers which stat each hologram displays and refreshes its text on an interval (`hologram.refresh-interval-seconds`, default 30s).
+- Fully optional and soft-depended: if FancyHolograms isn't installed, `/statshologram` replies with a clear "not installed" message instead of erroring, and the rest of the plugin is unaffected.
+
 ### 📊 Scoreboard
 - A fully MiniMessage/MiniPlaceholders-driven sidebar scoreboard, configurable title and lines, refreshed on an interval and rendered **relationally per viewer** (so relational placeholders resolve correctly for each viewer looking at each player).
 - Toggleable entirely via `scoreboard.enabled`.
+- In addition to MiniPlaceholders tags (`<player_name>`, `<luckperms_prefix>`, ...), three of CanvasSuite's own modules expose live per-viewer tags usable in any scoreboard line (or anywhere else MiniMessage is rendered): stats' `<stats_kills>`/`<stats_deaths>`/`<stats_kd>`/`<stats_killstreak>`/`<stats_best_killstreak>`/`<stats_playtime>` (see [Player Stats](#-player-stats) above), economy's `<economy_balance>`, and guilds' `<guild_own_name>`/`<guild_own_tag>` (render to a configurable `guild.no-guild-placeholder` string, default `"No Guild"`, for players not in a guild). These are deliberately separate from the `<guild_name>`/`<guild_tag>` placeholders used elsewhere for a *queried* guild (e.g. `/guild info <name>`), which refer to the guild being looked up rather than the viewer's own.
 
 ### 🕵️ Moderator Spectate
 - `/spectate <player>` toggles a packet-driven vanish + spectator view of the target for moderators — the target never sees the moderator, and the moderator can freely fly through blocks to observe.
@@ -143,6 +159,9 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 | `/reply <message>` (`/r`) | Reply to your last DM | `canvassuite.msg.use` |
 | `/ignore <player>` | Toggle ignoring a player's DMs | `canvassuite.msg.use` |
 | `/socialspy` | Toggle mirroring all DMs to yourself | `canvassuite.msg.socialspy` |
+| `/stats [player]` | View kill/death/killstreak/playtime stats | `canvassuite.stats.use` |
+| `/statstop <kills\|deaths\|killstreak\|playtime>` | Leaderboard GUI for a stat | `canvassuite.stats.use` |
+| `/statshologram <create\|remove\|list> ...` | Manage leaderboard holograms (requires FancyHolograms) | `canvassuite.stats.hologram.admin` |
 
 Every command's *own* name always works no matter what's configured — the aliases above are just the shipped defaults, and both they and each command's **subcommand** aliases (e.g. `/world tp` for `/world teleport`) are fully editable at runtime via `aliases.yml`/`subcommand-aliases.yml` — see [Configuration](#-configuration).
 
@@ -169,6 +188,8 @@ Every command's *own* name always works no matter what's configured — the alia
 | `canvassuite.moderation.spectate` | op | `/spectate` |
 | `canvassuite.msg.use` | true | Private messaging (`/msg`, `/reply`, `/ignore`) |
 | `canvassuite.msg.socialspy` | op | `/socialspy` |
+| `canvassuite.stats.use` | true | `/stats`, `/statstop` |
+| `canvassuite.stats.hologram.admin` | op | `/statshologram` (create/remove/list) |
 
 </details>
 
@@ -176,7 +197,7 @@ Every command's *own* name always works no matter what's configured — the alia
 
 Five files are created in `plugins/CanvasSuite/` on first start, plus `worlds.yml` once you first use `/world create`:
 
-- **`config.yml`** — storage backend (MySQL credentials with automatic SQLite fallback), economy settings, teleport warmup/TPA timeouts, home limits, RTP radius/cooldown/per-world enable+fee/precache, guild rules and costs, chat format, join/leave message toggles, protection toggles, spawn/void-world settings, nametag/tablist/scoreboard settings, and private-message cooldown.
+- **`config.yml`** — storage backend (MySQL credentials with automatic SQLite fallback), economy settings, teleport warmup/TPA timeouts, home limits, RTP radius/cooldown/per-world enable+fee/precache, guild rules/costs/no-guild placeholder string, chat format, join/leave message toggles, protection toggles, spawn/void-world settings, nametag/tablist/scoreboard settings, private-message cooldown, killstreak broadcast milestones/playtime autosave interval, and leaderboard hologram refresh interval.
 - **`messages.yml`** — every message the plugin sends, in MiniMessage. Change colors, add gradients, hover/click events, or MiniPlaceholders tags freely. The shared `<prefix>` is defined once at the top.
 - **`shop.yml`** — shop categories and per-item `buy-price` / `sell-price` values.
 - **`aliases.yml`** — extra aliases for every command (e.g. `/bal` for `/balance`), applied at enable by registering the same command object under each configured alias in Bukkit's command map. Edit freely; a command's own name always works regardless of what's listed here. Changes take effect on the next restart.
@@ -228,13 +249,13 @@ nametag:
 ## 📦 Installation
 
 1. Build the plugin (see [Building from Source](#-building-from-source)) or grab a release jar, and drop it into `plugins/`.
-2. Install [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) (required); optionally install PacketEvents (nametags/spectate/reserved-slot tablist), LuckPerms (tablist weight sorting) with the MiniPlaceholders-LuckPerms expansion (prefix/suffix placeholders), and Vault.
+2. Install [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) (required); optionally install PacketEvents (nametags/spectate/reserved-slot tablist), LuckPerms (tablist weight sorting) with the MiniPlaceholders-LuckPerms expansion (prefix/suffix placeholders), Vault, and FancyHolograms (leaderboard holograms).
 3. Start the server once to generate the default config files under `plugins/CanvasSuite/`, then edit `config.yml`/`messages.yml`/`shop.yml` to taste.
 4. Set `storage.type` to `MYSQL` in `config.yml` if you want a shared database instead of the default local SQLite file — see [Storage](#storage).
 
 ### Storage
 
-Set `storage.type` to `MYSQL` or `SQLITE` in `config.yml`. With MySQL selected, connections are pooled through HikariCP; if the database is unreachable at startup, the plugin logs a warning and **falls back to a local SQLite file** (`plugins/CanvasSuite/data.db`) so the server still boots. The schema (accounts, homes, warps, guilds, guild members, ignored players) is created automatically on either backend.
+Set `storage.type` to `MYSQL` or `SQLITE` in `config.yml`. With MySQL selected, connections are pooled through HikariCP; if the database is unreachable at startup, the plugin logs a warning and **falls back to a local SQLite file** (`plugins/CanvasSuite/data.db`) so the server still boots. The schema (accounts, homes, warps, guilds, guild members, ignored players, player stats, leaderboard hologram registry) is created automatically on either backend.
 
 ## 🛠️ Building from Source
 
@@ -244,7 +265,7 @@ Requires JDK 25 and Maven. The shaded jar lands at `target/CanvasSuite-<version>
 mvn clean package
 ```
 
-`HikariCP`, the MySQL driver, and the SQLite driver are shaded and relocated into the jar (`gg.nurmi.libs.*`) so they never collide with another plugin's copies on the same server. `canvas-api`, MiniPlaceholders, VaultAPI, PacketEvents, and the LuckPerms API are all `provided` — supplied by the server/other plugins at runtime, not bundled.
+`HikariCP`, the MySQL driver, and the SQLite driver are shaded and relocated into the jar (`gg.nurmi.libs.*`) so they never collide with another plugin's copies on the same server. `canvas-api`, MiniPlaceholders, VaultAPI, PacketEvents, the LuckPerms API, and FancyHolograms are all `provided` — supplied by the server/other plugins at runtime, not bundled.
 
 ## 📝 Notes & Limitations
 
@@ -254,6 +275,8 @@ mvn clean package
 - Stronghold blocking only prevents **new** generation — strongholds in already-generated chunks remain, and the datapack needs one world reload/server restart after first install.
 - Nether portal blocking prevents new portal **creation**; portals that existed before the plugin was installed remain usable.
 - The Vault bridge is synchronous by contract (Vault's API returns plain doubles), so third-party plugins calling it from a region thread may block briefly on uncached (offline-player) balance lookups.
+- Kills are credited via Bukkit's `PlayerDeathEvent#getKiller()`, which is only populated for direct player-vs-player damage — environmental deaths (fall, lava, void, etc.) always count as a death but never as anyone's kill, and any death resets the victim's killstreak regardless of cause.
+- `/statshologram` and the MiniPlaceholders expansions (stats/economy/guild) were verified with a standalone SQL smoke test against a real SQLite engine and a clean `mvn package`, but not against a live FancyHolograms installation or in-game — no CanvasMC server was available in the environment these were built in.
 
 ---
 
