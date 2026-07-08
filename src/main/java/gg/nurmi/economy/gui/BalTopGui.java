@@ -1,5 +1,6 @@
 package gg.nurmi.economy.gui;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import gg.nurmi.CanvasSuitePlugin;
 import gg.nurmi.economy.EconomyManager;
 import gg.nurmi.gui.AbstractGui;
@@ -31,7 +32,16 @@ public final class BalTopGui extends AbstractGui {
                     .build();
 
             if (head.getItemMeta() instanceof SkullMeta skullMeta) {
-                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(entry.uuid()));
+                // setOwningPlayer(OfflinePlayer) alone leaves the skull's texture unresolved for
+                // players the profile cache hasn't fully populated yet, which the client shows as
+                // "Dynamic" in the tooltip instead of the real skin. This call blocks (network
+                // fallback if the local cache is empty), but topBalances() already runs this whole
+                // GUI construction off the async scheduler, so it's safe to do here.
+                PlayerProfile profile = Bukkit.getOfflinePlayer(entry.uuid()).getPlayerProfile();
+                if (!profile.hasTextures()) {
+                    profile.complete(true);
+                }
+                skullMeta.setPlayerProfile(profile);
                 head.setItemMeta(skullMeta);
             }
             setItem(i, head);

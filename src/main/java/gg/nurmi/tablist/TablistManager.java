@@ -11,7 +11,9 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate.Action;
 import gg.nurmi.CanvasSuitePlugin;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -101,7 +103,9 @@ public final class TablistManager {
 
     private void broadcastLayout(List<PlayerSnapshot> players) {
         int totalSlots = rows() * COLUMNS;
-        int mirrored = Math.min(players.size(), totalSlots);
+        boolean overflow = players.size() > totalSlots;
+        int mirrored = overflow ? totalSlots : players.size();
+        int overflowCount = overflow ? players.size() - mirrored : 0;
 
         PlayerManager playerManager = PacketEvents.getAPI().getPlayerManager();
 
@@ -125,15 +129,18 @@ public final class TablistManager {
             List<WrapperPlayServerPlayerInfoUpdate.PlayerInfo> slots = new ArrayList<>(totalSlots);
             for (int k = 0; k < totalSlots; k++) {
                 int listOrder = listOrderFor(k);
-                slots.add(k < mirrored
-                        ? buildMirrorInfo(slotIds.get(k), players.get(k), listOrder)
-                        : buildFillerInfo(slotIds.get(k), k, listOrder));
+                if (k < mirrored) {
+                    slots.add(buildMirrorInfo(slotIds.get(k), players.get(k), listOrder));
+                } else if (overflow && k == mirrored) {
+                    slots.add(buildOverflowInfo(slotIds.get(k), overflowCount, listOrder));
+                } else {
+                    slots.add(buildFillerInfo(slotIds.get(k), k, listOrder));
+                }
             }
             WrapperPlayServerPlayerInfoUpdate slotsPacket = new WrapperPlayServerPlayerInfoUpdate(SLOT_ACTIONS, slots);
-
             List<WrapperPlayServerPlayerInfoUpdate.PlayerInfo> visibility = new ArrayList<>(players.size());
-            for (int i = 0; i < players.size(); i++) {
-                visibility.add(listedOnlyInfo(players.get(i).uuid(), i >= mirrored));
+            for (PlayerSnapshot player : players) {
+                visibility.add(listedOnlyInfo(player.uuid(), false));
             }
             WrapperPlayServerPlayerInfoUpdate visibilityPacket = new WrapperPlayServerPlayerInfoUpdate(LISTED_ACTIONS, visibility);
 
@@ -187,6 +194,14 @@ public final class TablistManager {
         UserProfile profile = new UserProfile(slotId, blankName(index), fillerSkin);
         return new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(
                 profile, true, 0, GameMode.SURVIVAL, Component.empty(), null, listOrder);
+    }
+
+    private WrapperPlayServerPlayerInfoUpdate.PlayerInfo buildOverflowInfo(UUID slotId, int overflowCount, int listOrder) {
+        UserProfile profile = new UserProfile(slotId, "", fillerSkin);
+        Component displayName = plugin.messages().render(Audience.empty(), "tablist.overflow",
+                Placeholder.unparsed("count", String.valueOf(overflowCount)));
+        return new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(
+                profile, true, 0, GameMode.SURVIVAL, displayName, null, listOrder);
     }
 
     private WrapperPlayServerPlayerInfoUpdate.PlayerInfo listedOnlyInfo(UUID uuid, boolean listed) {

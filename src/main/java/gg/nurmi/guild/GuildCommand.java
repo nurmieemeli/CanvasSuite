@@ -108,6 +108,9 @@ public final class GuildCommand implements CommandExecutor, TabCompleter {
 
             double cost = plugin.getConfig().getDouble("guild.creation-cost", 0);
             Runnable doCreate = () -> guildManager.createGuild(player.getUniqueId(), name, tag).thenAccept(result -> {
+                if (result != GuildManager.CreateResult.SUCCESS && cost > 0) {
+                    plugin.economy().deposit(player.getUniqueId(), BigDecimal.valueOf(cost));
+                }
                 switch (result) {
                     case SUCCESS -> plugin.messages().send(player, "guild.created",
                             Placeholder.unparsed("name", name), Placeholder.unparsed("tag", tag));
@@ -314,8 +317,10 @@ public final class GuildCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleChat(Player player) {
-        boolean nowEnabled = chatToggle.toggle(player.getUniqueId());
-        plugin.messages().send(player, nowEnabled ? "guild.chat-enabled" : "guild.chat-disabled");
+        requireGuild(player, guild -> {
+            boolean nowEnabled = chatToggle.toggle(player.getUniqueId());
+            plugin.messages().send(player, nowEnabled ? "guild.chat-enabled" : "guild.chat-disabled");
+        });
     }
 
     private void handleLeave(Player player) {
