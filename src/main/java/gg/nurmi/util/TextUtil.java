@@ -21,4 +21,20 @@ public final class TextUtil {
         }
         return builder.toString();
     }
+
+    public static String formatDuration(long totalSeconds) {
+        long days = totalSeconds / 86400;
+        long hours = (totalSeconds % 86400) / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+
+        StringBuilder builder = new StringBuilder();
+        if (days > 0) {
+            builder.append(days).append("d ");
+        }
+        if (days > 0 || hours > 0) {
+            builder.append(hours).append("h ");
+        }
+        builder.append(minutes).append("m");
+        return builder.toString();
+    }
 }

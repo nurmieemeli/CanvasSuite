@@ -155,6 +155,26 @@ public final class Database {
                     PRIMARY KEY (owner, ignored)
                 )
                 """);
+
+            statement.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS player_stats (
+                    uuid VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(16),
+                    kills INT NOT NULL DEFAULT 0,
+                    deaths INT NOT NULL DEFAULT 0,
+                    current_killstreak INT NOT NULL DEFAULT 0,
+                    best_killstreak INT NOT NULL DEFAULT 0,
+                    playtime_seconds BIGINT NOT NULL DEFAULT 0
+                )
+                """);
+
+            statement.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS leaderboard_holograms (
+                    name VARCHAR(48) PRIMARY KEY,
+                    stat_type VARCHAR(16) NOT NULL,
+                    entry_limit INT NOT NULL DEFAULT 10
+                )
+                """);
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to run CanvasSuite schema migration", ex);
         }

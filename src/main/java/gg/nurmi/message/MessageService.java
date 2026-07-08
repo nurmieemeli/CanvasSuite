@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public final class MessageService {
 
@@ -35,7 +36,7 @@ public final class MessageService {
         File file = new File(plugin.getDataFolder(), "messages.yml");
         this.messages = YamlConfiguration.loadConfiguration(file);
 
-        try (Reader defaultReader = new InputStreamReader(plugin.getResource("messages.yml"), StandardCharsets.UTF_8)) {
+        try (Reader defaultReader = new InputStreamReader(Objects.requireNonNull(plugin.getResource("messages.yml")), StandardCharsets.UTF_8)) {
             this.messages.setDefaults(YamlConfiguration.loadConfiguration(defaultReader));
         } catch (IOException ex) {
             plugin.getLogger().warning("Could not load bundled default messages.yml: " + ex.getMessage());

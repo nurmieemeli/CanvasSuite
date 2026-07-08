@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public final class EcoCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         if (!sender.hasPermission("canvassuite.economy.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;

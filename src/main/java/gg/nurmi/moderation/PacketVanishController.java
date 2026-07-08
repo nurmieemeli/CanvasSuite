@@ -18,6 +18,7 @@ import gg.nurmi.CanvasSuitePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public final class PacketVanishController {
         }
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerAbstract(PacketListenerPriority.NORMAL) {
             @Override
-            public void onPacketSend(PacketSendEvent event) {
+            public void onPacketSend(@NonNull PacketSendEvent event) {
                 handlePacketSend(event);
             }
         });

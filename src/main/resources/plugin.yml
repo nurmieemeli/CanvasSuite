@@ -6,7 +6,7 @@ folia-supported: true
 description: ${project.description}
 
 depend: [MiniPlaceholders]
-softdepend: [Vault, PacketEvents, LuckPerms]
+softdepend: [Vault, PacketEvents, LuckPerms, FancyHolograms]
 
 commands:
   balance:
@@ -84,6 +84,15 @@ commands:
   socialspy:
     description: Toggle mirroring everyone's private messages to yourself.
     usage: /socialspy
+  stats:
+    description: View your or another player's kill/death/killstreak/playtime stats.
+    usage: /stats [player]
+  statstop:
+    description: View the leaderboard for kills, deaths, killstreak, or playtime.
+    usage: /statstop <kills|deaths|killstreak|playtime>
+  statshologram:
+    description: Create, remove, or list leaderboard holograms (requires FancyHolograms).
+    usage: /statshologram <create|remove|list> ...
 
 permissions:
   canvassuite.admin:
@@ -116,3 +125,5 @@ permissions:
   canvassuite.world.admin: { default: op }
   canvassuite.msg.use: { default: true }
   canvassuite.msg.socialspy: { default: op }
+  canvassuite.stats.use: { default: true }
+  canvassuite.stats.hologram.admin: { default: op }

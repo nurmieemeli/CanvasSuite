@@ -263,19 +263,11 @@ public final class NametagManager {
         return new WrapperPlayServerTeams(teamName(subject), mode, info, members);
     }
 
-    /**
-     * The vanilla team system renders "prefix + real name + suffix", but the name portion is only
-     * ever colorable via this single legacy team color field - never full Component styling. To
-     * make a prefix's color still carry onto the name (matching how nesting Components normally
-     * cascades), this walks down the prefix's last child at each level to find whatever color
-     * would be "active" right after the prefix ends, the same as if the name were appended as a
-     * nested child instead of being a separate field.
-     */
     private NamedTextColor trailingColor(Component component, NamedTextColor inherited) {
         TextColor own = component.color();
         NamedTextColor current = own != null ? NamedTextColor.nearestTo(own) : inherited;
         List<Component> children = component.children();
-        return children.isEmpty() ? current : trailingColor(children.get(children.size() - 1), current);
+        return children.isEmpty() ? current : trailingColor(children.getLast(), current);
     }
 
     private void sendPacketTo(Player viewer, WrapperPlayServerTeams packet) {

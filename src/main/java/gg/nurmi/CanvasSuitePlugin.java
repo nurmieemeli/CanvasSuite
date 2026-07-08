@@ -16,6 +16,8 @@ import gg.nurmi.guild.GuildChatToggle;
 import gg.nurmi.guild.GuildCommand;
 import gg.nurmi.guild.GuildManager;
 import gg.nurmi.gui.GuiListener;
+import gg.nurmi.stats.hologram.LeaderboardHologramCommand;
+import gg.nurmi.stats.hologram.LeaderboardHologramManager;
 import gg.nurmi.message.MessageService;
 import gg.nurmi.message.IgnoreCommand;
 import gg.nurmi.message.MsgCommand;
@@ -46,6 +48,10 @@ import gg.nurmi.spawn.SpawnCommand;
 import gg.nurmi.spawn.SpawnWorldManager;
 import gg.nurmi.spawn.VoidFallRescueListener;
 import gg.nurmi.spawn.VoidWorldListener;
+import gg.nurmi.stats.StatsCommand;
+import gg.nurmi.stats.StatsListener;
+import gg.nurmi.stats.StatsManager;
+import gg.nurmi.stats.StatsTopCommand;
 import gg.nurmi.storage.Database;
 import gg.nurmi.tablist.TablistListener;
 import gg.nurmi.tablist.TablistManager;
@@ -69,6 +75,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
 import java.util.Set;
 
 public final class CanvasSuitePlugin extends JavaPlugin {
@@ -79,22 +86,15 @@ public final class CanvasSuitePlugin extends JavaPlugin {
     private SubcommandAliases subcommandAliases;
     private EconomyManager economyManager;
     private ShopManager shopManager;
-    private HomeManager homeManager;
-    private WarpManager warpManager;
-    private TpaManager tpaManager;
     private TeleportExecutor teleportExecutor;
-    private RtpManager rtpManager;
     private GuildManager guildManager;
     private GuildChatToggle guildChatToggle;
     private PacketEventsBootstrap packetEventsBootstrap;
     private SpawnWorldManager spawnWorldManager;
-    private NametagManager nametagManager;
-    private SpectateManager spectateManager;
     private TablistManager tablistManager;
-    private ScoreboardManager scoreboardManager;
     private WorldManager worldManager;
-    private PrivateMessageManager privateMessageManager;
-    private SocialSpyToggle socialSpyToggle;
+    private StatsManager statsManager;
+    private LeaderboardHologramManager hologramManager;
 
     @Override
     public void onEnable() {
@@ -129,17 +129,46 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         registerModeration();
         registerTablist();
         registerScoreboard();
+        registerStats();
+        registerHolograms();
 
         new AliasManager(this).applyAliases();
 
         getLogger().info("CanvasSuite enabled.");
     }
 
+    private void registerStats() {
+        this.statsManager = new StatsManager(this);
+        getServer().getPluginManager().registerEvents(new StatsListener(this, statsManager), this);
+
+        Objects.requireNonNull(getCommand("stats")).setExecutor(new StatsCommand(this, statsManager));
+        Objects.requireNonNull(getCommand("statstop")).setExecutor(new StatsTopCommand(this, statsManager));
+
+        int periodSeconds = Math.max(5, getConfig().getInt("stats.playtime-autosave-interval-seconds", 60));
+        schedulerUtil.runGlobalRepeating(statsManager::flushOnline, periodSeconds * 20L, periodSeconds * 20L);
+    }
+
+    private void registerHolograms() {
+        boolean available = getServer().getPluginManager().getPlugin("FancyHolograms") != null;
+        if (!available) {
+            getLogger().warning("FancyHolograms not found - leaderboard holograms will be disabled. "
+                    + "Install FancyHolograms to enable /statshologram.");
+        }
+
+        this.hologramManager = available ? new LeaderboardHologramManager(this) : null;
+        Objects.requireNonNull(getCommand("statshologram")).setExecutor(new LeaderboardHologramCommand(this, hologramManager));
+
+        if (available) {
+            int periodSeconds = Math.max(5, getConfig().getInt("hologram.refresh-interval-seconds", 30));
+            schedulerUtil.runGlobalRepeating(hologramManager::refreshAll, periodSeconds * 20L, periodSeconds * 20L);
+        }
+    }
+
     private void registerScoreboard() {
         if (!getConfig().getBoolean("scoreboard.enabled", true)) {
             return;
         }
-        this.scoreboardManager = new ScoreboardManager(this);
+        ScoreboardManager scoreboardManager = new ScoreboardManager(this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(this, scoreboardManager), this);
         int periodSeconds = Math.max(1, getConfig().getInt("scoreboard.refresh-interval-seconds", 5));
         schedulerUtil.runGlobalRepeating(scoreboardManager::refreshAll, periodSeconds * 20L, periodSeconds * 20L);
@@ -157,8 +186,8 @@ public final class CanvasSuitePlugin extends JavaPlugin {
 
     private void registerModeration() {
         PacketVanishController vanishController = new PacketVanishController(this);
-        this.spectateManager = new SpectateManager(vanishController);
-        getCommand("spectate").setExecutor(new SpectateCommand(this, spectateManager));
+        SpectateManager spectateManager = new SpectateManager(vanishController);
+        Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand(this, spectateManager));
     }
 
     private void registerWorlds() {
@@ -166,27 +195,27 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         worldManager.loadWorlds();
 
         WorldCommand worldCommand = new WorldCommand(this, worldManager);
-        getCommand("world").setExecutor(worldCommand);
-        getCommand("world").setTabCompleter(worldCommand);
+        Objects.requireNonNull(getCommand("world")).setExecutor(worldCommand);
+        Objects.requireNonNull(getCommand("world")).setTabCompleter(worldCommand);
     }
 
     private void registerMessaging() {
-        this.socialSpyToggle = new SocialSpyToggle();
-        this.privateMessageManager = new PrivateMessageManager(this, socialSpyToggle);
+        SocialSpyToggle socialSpyToggle = new SocialSpyToggle();
+        PrivateMessageManager privateMessageManager = new PrivateMessageManager(this, socialSpyToggle);
 
         getServer().getPluginManager().registerEvents(new PrivateMessageListener(privateMessageManager), this);
 
-        getCommand("msg").setExecutor(new MsgCommand(this, privateMessageManager));
-        getCommand("reply").setExecutor(new ReplyCommand(this, privateMessageManager));
-        getCommand("ignore").setExecutor(new IgnoreCommand(this, privateMessageManager));
-        getCommand("socialspy").setExecutor(new SocialSpyCommand(this, socialSpyToggle));
+        Objects.requireNonNull(getCommand("msg")).setExecutor(new MsgCommand(this, privateMessageManager));
+        Objects.requireNonNull(getCommand("reply")).setExecutor(new ReplyCommand(this, privateMessageManager));
+        Objects.requireNonNull(getCommand("ignore")).setExecutor(new IgnoreCommand(this, privateMessageManager));
+        Objects.requireNonNull(getCommand("socialspy")).setExecutor(new SocialSpyCommand(this, socialSpyToggle));
     }
 
     private void registerNametags() {
         if (!getConfig().getBoolean("nametag.enabled", true)) {
             return;
         }
-        this.nametagManager = new NametagManager(this);
+        NametagManager nametagManager = new NametagManager(this);
         getServer().getPluginManager().registerEvents(new NametagListener(nametagManager), this);
         int periodSeconds = Math.max(5, getConfig().getInt("nametag.refresh-interval-seconds", 30));
         schedulerUtil.runGlobalRepeating(nametagManager::refreshAll, periodSeconds * 20L, periodSeconds * 20L);
@@ -199,8 +228,8 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         this.spawnWorldManager = new SpawnWorldManager(this);
         spawnWorldManager.ensureWorldExists();
 
-        getCommand("setspawn").setExecutor(new SetSpawnCommand(this, spawnWorldManager));
-        getCommand("spawn").setExecutor(new SpawnCommand(this, spawnWorldManager));
+        Objects.requireNonNull(getCommand("setspawn")).setExecutor(new SetSpawnCommand(this, spawnWorldManager));
+        Objects.requireNonNull(getCommand("spawn")).setExecutor(new SpawnCommand(this, spawnWorldManager));
 
         getServer().getPluginManager().registerEvents(new FirstJoinListener(this, spawnWorldManager), this);
         getServer().getPluginManager().registerEvents(new VoidWorldListener(spawnWorldManager), this);
@@ -214,8 +243,8 @@ public final class CanvasSuitePlugin extends JavaPlugin {
     }
 
     private void registerRtp() {
-        this.rtpManager = new RtpManager(this);
-        getCommand("rtp").setExecutor(new RtpCommand(this, rtpManager));
+        RtpManager rtpManager = new RtpManager(this);
+        Objects.requireNonNull(getCommand("rtp")).setExecutor(new RtpCommand(this, rtpManager));
 
         if (getConfig().getBoolean("rtp.precache.enabled", true)) {
             int periodSeconds = Math.max(1, getConfig().getInt("rtp.precache.interval-seconds", 5));
@@ -227,44 +256,44 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         this.guildManager = new GuildManager(this);
         this.guildChatToggle = new GuildChatToggle();
         GuildCommand guildCommand = new GuildCommand(this, guildManager, guildChatToggle);
-        getCommand("guild").setExecutor(guildCommand);
-        getCommand("guild").setTabCompleter(guildCommand);
+        Objects.requireNonNull(getCommand("guild")).setExecutor(guildCommand);
+        Objects.requireNonNull(getCommand("guild")).setTabCompleter(guildCommand);
     }
 
     private void registerTeleport() {
-        this.homeManager = new HomeManager(this);
-        this.warpManager = new WarpManager(this);
-        this.tpaManager = new TpaManager(this);
+        HomeManager homeManager = new HomeManager(this);
+        WarpManager warpManager = new WarpManager(this);
+        TpaManager tpaManager = new TpaManager(this);
         TeleportWarmup warmup = new TeleportWarmup(this);
         this.teleportExecutor = new TeleportExecutor(this, warmup);
 
-        getCommand("sethome").setExecutor(new SetHomeCommand(this, homeManager));
-        getCommand("home").setExecutor(new HomeCommand(this, homeManager, teleportExecutor));
-        getCommand("delhome").setExecutor(new DelHomeCommand(this, homeManager));
+        Objects.requireNonNull(getCommand("sethome")).setExecutor(new SetHomeCommand(this, homeManager));
+        Objects.requireNonNull(getCommand("home")).setExecutor(new HomeCommand(this, homeManager, teleportExecutor));
+        Objects.requireNonNull(getCommand("delhome")).setExecutor(new DelHomeCommand(this, homeManager));
 
-        getCommand("setwarp").setExecutor(new SetWarpCommand(this, warpManager));
-        getCommand("warp").setExecutor(new WarpCommand(this, warpManager, teleportExecutor));
-        getCommand("delwarp").setExecutor(new DelWarpCommand(this, warpManager));
+        Objects.requireNonNull(getCommand("setwarp")).setExecutor(new SetWarpCommand(this, warpManager));
+        Objects.requireNonNull(getCommand("warp")).setExecutor(new WarpCommand(this, warpManager, teleportExecutor));
+        Objects.requireNonNull(getCommand("delwarp")).setExecutor(new DelWarpCommand(this, warpManager));
 
-        getCommand("tpa").setExecutor(new TpaCommand(this, tpaManager, false));
-        getCommand("tpahere").setExecutor(new TpaCommand(this, tpaManager, true));
-        getCommand("tpaccept").setExecutor(new TpAcceptCommand(this, tpaManager, teleportExecutor));
-        getCommand("tpdeny").setExecutor(new TpDenyCommand(this, tpaManager));
+        Objects.requireNonNull(getCommand("tpa")).setExecutor(new TpaCommand(this, tpaManager, false));
+        Objects.requireNonNull(getCommand("tpahere")).setExecutor(new TpaCommand(this, tpaManager, true));
+        Objects.requireNonNull(getCommand("tpaccept")).setExecutor(new TpAcceptCommand(this, tpaManager, teleportExecutor));
+        Objects.requireNonNull(getCommand("tpdeny")).setExecutor(new TpDenyCommand(this, tpaManager));
     }
 
     private void registerShop() {
         this.shopManager = new ShopManager(this);
-        getCommand("shop").setExecutor(new ShopCommand(this));
+        Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
     }
 
     private void registerEconomy() {
         this.economyManager = new EconomyManager(this);
         getServer().getPluginManager().registerEvents(new EconomyListener(economyManager), this);
 
-        getCommand("balance").setExecutor(new BalanceCommand(this, economyManager));
-        getCommand("pay").setExecutor(new PayCommand(this, economyManager));
-        getCommand("baltop").setExecutor(new BalTopCommand(this, economyManager));
-        getCommand("eco").setExecutor(new EcoCommand(this, economyManager));
+        Objects.requireNonNull(getCommand("balance")).setExecutor(new BalanceCommand(this, economyManager));
+        Objects.requireNonNull(getCommand("pay")).setExecutor(new PayCommand(this, economyManager));
+        Objects.requireNonNull(getCommand("baltop")).setExecutor(new BalTopCommand(this, economyManager));
+        Objects.requireNonNull(getCommand("eco")).setExecutor(new EcoCommand(this, economyManager));
 
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             getServer().getServicesManager().register(Economy.class, new VaultEconomyProvider(economyManager),
@@ -277,6 +306,9 @@ public final class CanvasSuitePlugin extends JavaPlugin {
     public void onDisable() {
         if (tablistManager != null) {
             tablistManager.shutdown();
+        }
+        if (statsManager != null) {
+            statsManager.flushOnline();
         }
         if (database != null) {
             database.close();
@@ -308,24 +340,8 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         return shopManager;
     }
 
-    public HomeManager homes() {
-        return homeManager;
-    }
-
-    public WarpManager warps() {
-        return warpManager;
-    }
-
-    public TpaManager tpa() {
-        return tpaManager;
-    }
-
     public TeleportExecutor teleportExecutor() {
         return teleportExecutor;
-    }
-
-    public RtpManager rtp() {
-        return rtpManager;
     }
 
     public GuildManager guilds() {
@@ -344,31 +360,15 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         return spawnWorldManager;
     }
 
-    public NametagManager nametags() {
-        return nametagManager;
-    }
-
-    public SpectateManager spectate() {
-        return spectateManager;
-    }
-
-    public TablistManager tablist() {
-        return tablistManager;
-    }
-
-    public ScoreboardManager scoreboard() {
-        return scoreboardManager;
-    }
-
     public WorldManager worlds() {
         return worldManager;
     }
 
-    public PrivateMessageManager privateMessages() {
-        return privateMessageManager;
+    public StatsManager stats() {
+        return statsManager;
     }
 
-    public SocialSpyToggle socialSpy() {
-        return socialSpyToggle;
+    public LeaderboardHologramManager holograms() {
+        return hologramManager;
     }
 }

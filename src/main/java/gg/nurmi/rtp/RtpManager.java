@@ -116,13 +116,11 @@ public final class RtpManager {
 
     private void teleport(Player player, Location location) {
         applyCooldown(player.getUniqueId());
-        plugin.scheduler().runAtEntity(player, () -> {
-            player.teleportAsync(location).thenAccept(success -> {
-                if (success) {
-                    plugin.messages().send(player, "rtp.success");
-                }
-            });
-        }, () -> {});
+        plugin.scheduler().runAtEntity(player, () -> player.teleportAsync(location).thenAccept(success -> {
+            if (success) {
+                plugin.messages().send(player, "rtp.success");
+            }
+        }), () -> {});
     }
 
     public Location pollCached(World world) {
@@ -145,7 +143,7 @@ public final class RtpManager {
             if (!isEnabled(world)) {
                 continue;
             }
-            ConcurrentLinkedDeque<Location> queue = precache.computeIfAbsent(world.getName(), name -> new ConcurrentLinkedDeque<>());
+            ConcurrentLinkedDeque<Location> queue = precache.computeIfAbsent(world.getName(), ignored -> new ConcurrentLinkedDeque<>());
             if (queue.size() >= targetSize) {
                 continue;
             }

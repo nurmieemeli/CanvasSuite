@@ -39,6 +39,10 @@
             <id>luckperms</id>
             <url>https://repo.lucko.me/</url>
         </repository>
+        <repository>
+            <id>fancyinnovations-releases</id>
+            <url>https://repo.fancyinnovations.com/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -86,6 +90,16 @@
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
             <version>5.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Leaderboard holograms, soft dependency. Installed as its own standalone plugin on the
+             server; we only compile against it (no separate "-api" artifact is published, the API
+             classes ship inside the plugin jar itself). -->
+        <dependency>
+            <groupId>de.oliver</groupId>
+            <artifactId>FancyHolograms</artifactId>
+            <version>2.10.0</version>
             <scope>provided</scope>
         </dependency>
 

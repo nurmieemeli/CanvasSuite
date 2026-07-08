@@ -19,23 +19,23 @@ public final class SchedulerUtil {
     }
 
     public ScheduledTask runGlobal(Runnable task) {
-        return Bukkit.getGlobalRegionScheduler().run(plugin, t -> task.run());
+        return Bukkit.getGlobalRegionScheduler().run(plugin, ignored -> task.run());
     }
 
     public ScheduledTask runGlobalDelayed(Runnable task, long delayTicks) {
-        return Bukkit.getGlobalRegionScheduler().runDelayed(plugin, t -> task.run(), Math.max(1, delayTicks));
+        return Bukkit.getGlobalRegionScheduler().runDelayed(plugin, ignored -> task.run(), Math.max(1, delayTicks));
     }
 
     public ScheduledTask runGlobalRepeating(Runnable task, long delayTicks, long periodTicks) {
-        return Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, t -> task.run(), Math.max(1, delayTicks), periodTicks);
+        return Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, ignored -> task.run(), Math.max(1, delayTicks), periodTicks);
     }
 
     public ScheduledTask runAtLocation(Location location, Runnable task) {
-        return Bukkit.getRegionScheduler().run(plugin, location, t -> task.run());
+        return Bukkit.getRegionScheduler().run(plugin, location, ignored -> task.run());
     }
 
     public ScheduledTask runAtLocationDelayed(Location location, Runnable task, long delayTicks) {
-        return Bukkit.getRegionScheduler().runDelayed(plugin, location, t -> task.run(), Math.max(1, delayTicks));
+        return Bukkit.getRegionScheduler().runDelayed(plugin, location, ignored -> task.run(), Math.max(1, delayTicks));
     }
 
     public void runAtChunk(org.bukkit.World world, int chunkX, int chunkZ, Runnable task) {
@@ -43,20 +43,20 @@ public final class SchedulerUtil {
     }
 
     public void runAtEntity(Entity entity, Runnable task, Runnable ifRetired) {
-        entity.getScheduler().run(plugin, t -> task.run(), ifRetired);
+        entity.getScheduler().run(plugin, ignored -> task.run(), ifRetired);
     }
 
     public boolean runAtEntityDelayed(Entity entity, Runnable task, Runnable ifRetired, long delayTicks) {
-        return entity.getScheduler().runDelayed(plugin, t -> task.run(), ifRetired, Math.max(1, delayTicks)) != null;
+        return entity.getScheduler().runDelayed(plugin, ignored -> task.run(), ifRetired, Math.max(1, delayTicks)) != null;
     }
 
     public void runAsync(Runnable task) {
-        Bukkit.getAsyncScheduler().runNow(plugin, t -> task.run());
+        Bukkit.getAsyncScheduler().runNow(plugin, ignored -> task.run());
     }
 
     public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
         CompletableFuture<T> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(plugin, t -> {
+        Bukkit.getAsyncScheduler().runNow(plugin, ignored -> {
             try {
                 future.complete(supplier.get());
             } catch (Throwable ex) {
@@ -67,7 +67,7 @@ public final class SchedulerUtil {
     }
 
     public ScheduledTask runAsyncRepeating(Runnable task, long delayMillis, long periodMillis) {
-        return Bukkit.getAsyncScheduler().runAtFixedRate(plugin, t -> task.run(), delayMillis, periodMillis, java.util.concurrent.TimeUnit.MILLISECONDS);
+        return Bukkit.getAsyncScheduler().runAtFixedRate(plugin, ignored -> task.run(), delayMillis, periodMillis, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
     public <T> void supplyAsyncThenAtEntity(Supplier<T> supplier, Entity entity, Consumer<T> consumer) {

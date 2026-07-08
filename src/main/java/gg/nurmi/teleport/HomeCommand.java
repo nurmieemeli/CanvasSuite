@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 public final class HomeCommand implements CommandExecutor {
 
@@ -21,7 +22,7 @@ public final class HomeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         if (!(sender instanceof Player player)) {
             plugin.messages().send(sender, "general.player-only");
             return true;
@@ -36,7 +37,7 @@ public final class HomeCommand implements CommandExecutor {
                 if (homes.isEmpty()) {
                     plugin.messages().send(player, "teleport.no-homes");
                 } else if (homes.size() == 1) {
-                    teleportExecutor.executeSafely(player, homes.get(0).toLocation());
+                    teleportExecutor.executeSafely(player, homes.getFirst().toLocation());
                 } else {
                     plugin.scheduler().runAtEntity(player, () -> new HomesGui(plugin, homeManager, teleportExecutor, homes).open(player), () -> {});
                 }

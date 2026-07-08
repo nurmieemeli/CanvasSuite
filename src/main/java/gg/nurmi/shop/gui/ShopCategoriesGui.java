@@ -30,6 +30,6 @@ public final class ShopCategoriesGui extends AbstractGui {
                 .mapToInt(ShopCategory::slot)
                 .max()
                 .orElse(0);
-        return Math.max(3, Math.min(6, (maxSlot / 9) + 1));
+        return Math.clamp((maxSlot / 9) + 1, 3, 6);
     }
 }
