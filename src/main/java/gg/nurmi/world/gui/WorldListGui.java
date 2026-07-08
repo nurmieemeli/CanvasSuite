@@ -1,6 +1,6 @@
 package gg.nurmi.world.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.gui.Pagination;
 import gg.nurmi.util.ItemBuilder;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public final class WorldListGui extends AbstractGui {
 
-    public WorldListGui(CanvasSuitePlugin plugin, WorldManager worldManager, int page) {
+    public WorldListGui(OneSMPPlugin plugin, WorldManager worldManager, int page) {
         super(plugin, plugin.messages().parse("<gradient:#38bdf8:#818cf8><bold>Managed Worlds</bold></gradient>"), 6);
 
         List<WorldSettings> worlds = List.copyOf(worldManager.listWorlds());

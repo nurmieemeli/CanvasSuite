@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,11 +13,11 @@ import java.util.Optional;
 
 public final class TpAcceptCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final TpaManager tpaManager;
     private final TeleportExecutor teleportExecutor;
 
-    public TpAcceptCommand(CanvasSuitePlugin plugin, TpaManager tpaManager, TeleportExecutor teleportExecutor) {
+    public TpAcceptCommand(OneSMPPlugin plugin, TpaManager tpaManager, TeleportExecutor teleportExecutor) {
         this.plugin = plugin;
         this.tpaManager = tpaManager;
         this.teleportExecutor = teleportExecutor;

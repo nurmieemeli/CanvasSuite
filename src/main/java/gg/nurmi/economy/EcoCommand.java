@@ -1,6 +1,6 @@
 package gg.nurmi.economy;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.CommandUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -16,17 +16,17 @@ import java.util.concurrent.CompletableFuture;
 
 public final class EcoCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final EconomyManager economyManager;
 
-    public EcoCommand(CanvasSuitePlugin plugin, EconomyManager economyManager) {
+    public EcoCommand(OneSMPPlugin plugin, EconomyManager economyManager) {
         this.plugin = plugin;
         this.economyManager = economyManager;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
-        if (!sender.hasPermission("canvassuite.economy.admin")) {
+        if (!sender.hasPermission("onesmp.economy.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

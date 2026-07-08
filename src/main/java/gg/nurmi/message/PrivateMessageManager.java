@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 import gg.nurmi.util.Cooldown;
 import net.kyori.adventure.text.Component;
@@ -20,14 +20,14 @@ import java.util.logging.Level;
 
 public final class PrivateMessageManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final SocialSpyToggle socialSpy;
     private final Cooldown cooldown = new Cooldown();
     private final Map<UUID, UUID> lastConversant = new ConcurrentHashMap<>();
     private final Map<UUID, Set<UUID>> ignoreCache = new ConcurrentHashMap<>();
 
-    public PrivateMessageManager(CanvasSuitePlugin plugin, SocialSpyToggle socialSpy) {
+    public PrivateMessageManager(OneSMPPlugin plugin, SocialSpyToggle socialSpy) {
         this.plugin = plugin;
         this.database = plugin.database();
         this.socialSpy = socialSpy;
@@ -108,7 +108,7 @@ public final class PrivateMessageManager {
             return;
         }
 
-        Component messageComponent = sender.hasPermission("canvassuite.chat.format")
+        Component messageComponent = sender.hasPermission("onesmp.chat.format")
                 ? plugin.messages().parse(rawMessage)
                 : Component.text(rawMessage);
 

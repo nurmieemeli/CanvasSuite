@@ -46,8 +46,8 @@ public final class Database {
     private void connectMysql(FileConfiguration config) {
         String host = config.getString("storage.mysql.host", "localhost");
         int port = config.getInt("storage.mysql.port", 3306);
-        String database = config.getString("storage.mysql.database", "canvassuite");
-        String username = config.getString("storage.mysql.username", "canvassuite");
+        String database = config.getString("storage.mysql.database", "onesmp");
+        String username = config.getString("storage.mysql.username", "onesmp");
         String password = config.getString("storage.mysql.password", "");
         boolean useSsl = config.getBoolean("storage.mysql.useSSL", false);
         int poolSize = config.getInt("storage.mysql.pool-size", 10);
@@ -58,7 +58,7 @@ public final class Database {
         hikari.setUsername(username);
         hikari.setPassword(password);
         hikari.setMaximumPoolSize(poolSize);
-        hikari.setPoolName("CanvasSuite-MySQL");
+        hikari.setPoolName("OneSMP-MySQL");
         hikari.setConnectionTimeout(5000);
         hikari.setInitializationFailTimeout(5000);
         this.dataSource = new HikariDataSource(hikari);
@@ -76,7 +76,7 @@ public final class Database {
         HikariConfig hikari = new HikariConfig();
         hikari.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
         hikari.setMaximumPoolSize(1);
-        hikari.setPoolName("CanvasSuite-SQLite");
+        hikari.setPoolName("OneSMP-SQLite");
         this.dataSource = new HikariDataSource(hikari);
     }
 
@@ -188,7 +188,7 @@ public final class Database {
                 )
                 """);
         } catch (SQLException ex) {
-            throw new RuntimeException("Failed to run CanvasSuite schema migration", ex);
+            throw new RuntimeException("Failed to run OneSMP schema migration", ex);
         }
     }
 

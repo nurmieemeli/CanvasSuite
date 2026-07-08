@@ -1,6 +1,6 @@
 package gg.nurmi.util;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,11 +13,11 @@ import java.util.Map;
 
 public final class SubcommandAliases {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<String, Map<String, String>> aliasToCanonical = new HashMap<>();
     private final Map<String, List<String>> labels = new HashMap<>();
 
-    public SubcommandAliases(CanvasSuitePlugin plugin) {
+    public SubcommandAliases(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -1,6 +1,6 @@
 package gg.nurmi.stats;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 import gg.nurmi.util.TextUtil;
 
@@ -79,11 +79,11 @@ public final class StatsManager {
         volatile long sessionStartMillis;
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final Map<UUID, Stats> cache = new ConcurrentHashMap<>();
 
-    public StatsManager(CanvasSuitePlugin plugin) {
+    public StatsManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
     }

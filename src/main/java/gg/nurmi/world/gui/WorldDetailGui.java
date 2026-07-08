@@ -1,6 +1,6 @@
 package gg.nurmi.world.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.util.ItemBuilder;
 import gg.nurmi.world.WorldManager;
@@ -19,7 +19,7 @@ public final class WorldDetailGui extends AbstractGui {
     private static final int BACK_SLOT = 45;
     private static final int CLOSE_SLOT = 49;
 
-    public WorldDetailGui(CanvasSuitePlugin plugin, WorldManager worldManager, String worldName) {
+    public WorldDetailGui(OneSMPPlugin plugin, WorldManager worldManager, String worldName) {
         super(plugin, plugin.messages().parse("<white><name>", Placeholder.unparsed("name", worldName)), 6);
 
         WorldSettings settings = worldManager.getSettings(worldName);

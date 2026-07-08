@@ -1,6 +1,6 @@
 package gg.nurmi.stats;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.stats.gui.StatsTopGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -11,10 +11,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class StatsTopCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final StatsManager statsManager;
 
-    public StatsTopCommand(CanvasSuitePlugin plugin, StatsManager statsManager) {
+    public StatsTopCommand(OneSMPPlugin plugin, StatsManager statsManager) {
         this.plugin = plugin;
         this.statsManager = statsManager;
     }
@@ -25,7 +25,7 @@ public final class StatsTopCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.stats.use")) {
+        if (!player.hasPermission("onesmp.stats.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

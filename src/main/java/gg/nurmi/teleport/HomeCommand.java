@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.teleport.gui.HomesGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -11,11 +11,11 @@ import org.jspecify.annotations.NonNull;
 
 public final class HomeCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final HomeManager homeManager;
     private final TeleportExecutor teleportExecutor;
 
-    public HomeCommand(CanvasSuitePlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor) {
+    public HomeCommand(OneSMPPlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor) {
         this.plugin = plugin;
         this.homeManager = homeManager;
         this.teleportExecutor = teleportExecutor;
@@ -27,7 +27,7 @@ public final class HomeCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.home.use")) {
+        if (!player.hasPermission("onesmp.home.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

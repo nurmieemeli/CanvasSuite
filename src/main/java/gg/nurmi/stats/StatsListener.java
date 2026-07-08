@@ -1,6 +1,6 @@
 package gg.nurmi.stats;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,10 +14,10 @@ import java.util.List;
 
 public final class StatsListener implements Listener {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final StatsManager statsManager;
 
-    public StatsListener(CanvasSuitePlugin plugin, StatsManager statsManager) {
+    public StatsListener(OneSMPPlugin plugin, StatsManager statsManager) {
         this.plugin = plugin;
         this.statsManager = statsManager;
     }

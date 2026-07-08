@@ -1,6 +1,6 @@
 package gg.nurmi.guild.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.Guild;
 import gg.nurmi.guild.GuildManager;
 import gg.nurmi.guild.GuildMember;
@@ -23,11 +23,11 @@ public final class GuildMembersGui extends AbstractGui {
 
     private static final int BACK_SLOT = 45;
 
-    public GuildMembersGui(CanvasSuitePlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid) {
+    public GuildMembersGui(OneSMPPlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid) {
         this(plugin, guildManager, guild, viewerUuid, 0);
     }
 
-    public GuildMembersGui(CanvasSuitePlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid, int page) {
+    public GuildMembersGui(OneSMPPlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid, int page) {
         super(plugin, plugin.messages().parse("<white>Members of <guild_name>", Placeholder.unparsed("guild_name", guild.name())), 6);
 
         GuildRole viewerRole = guild.member(viewerUuid).map(GuildMember::role).orElse(GuildRole.MEMBER);

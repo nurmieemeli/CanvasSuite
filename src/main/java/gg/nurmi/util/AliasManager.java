@@ -1,6 +1,6 @@
 package gg.nurmi.util;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,9 +11,9 @@ import java.util.Locale;
 
 public final class AliasManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public AliasManager(CanvasSuitePlugin plugin) {
+    public AliasManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -36,7 +36,7 @@ public final class AliasManager {
 
             for (String alias : section.getStringList(commandName)) {
                 String normalized = alias.toLowerCase(Locale.ROOT);
-                if (!commandMap.register(normalized, "canvassuite", command)) {
+                if (!commandMap.register(normalized, "onesmp", command)) {
                     plugin.getLogger().warning("aliases.yml: alias '" + normalized + "' for '" + commandName
                             + "' is already taken by another command, skipping.");
                 }

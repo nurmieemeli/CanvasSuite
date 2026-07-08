@@ -17,7 +17,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.OptionData;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.ScoreBoardTeamInfo;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.TeamMode;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.Guild;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -39,14 +39,14 @@ import java.util.logging.Level;
 // Uses raw PacketEvents packets for everything here: a fake scoreboard team gives the prefix line (no real team is ever registered), and a fake TEXT_DISPLAY entity mounted as a passenger gives the second guild-tag line, since Bukkit has no API for either.
 public final class NametagManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<UUID, Component> lastSent = new ConcurrentHashMap<>();
     private record GuildTagState(int entityId, UUID displayUuid, Component tag, String world) {}
 
     private final Map<UUID, GuildTagState> guildTagState = new ConcurrentHashMap<>();
     private final AtomicInteger fakeEntityIdCounter = new AtomicInteger(2_000_000_000);
 
-    public NametagManager(CanvasSuitePlugin plugin) {
+    public NametagManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

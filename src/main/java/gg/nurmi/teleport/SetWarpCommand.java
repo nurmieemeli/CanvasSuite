@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,10 +10,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class SetWarpCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final WarpManager warpManager;
 
-    public SetWarpCommand(CanvasSuitePlugin plugin, WarpManager warpManager) {
+    public SetWarpCommand(OneSMPPlugin plugin, WarpManager warpManager) {
         this.plugin = plugin;
         this.warpManager = warpManager;
     }
@@ -24,7 +24,7 @@ public final class SetWarpCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.warp.admin")) {
+        if (!player.hasPermission("onesmp.warp.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

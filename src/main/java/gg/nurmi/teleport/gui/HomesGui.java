@@ -1,6 +1,6 @@
 package gg.nurmi.teleport.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.gui.Pagination;
 import gg.nurmi.teleport.Home;
@@ -16,11 +16,11 @@ import java.util.List;
 
 public final class HomesGui extends AbstractGui {
 
-    public HomesGui(CanvasSuitePlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor, List<Home> homes) {
+    public HomesGui(OneSMPPlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor, List<Home> homes) {
         this(plugin, homeManager, teleportExecutor, homes, 0);
     }
 
-    public HomesGui(CanvasSuitePlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor, List<Home> homes, int page) {
+    public HomesGui(OneSMPPlugin plugin, HomeManager homeManager, TeleportExecutor teleportExecutor, List<Home> homes, int page) {
         super(plugin, plugin.messages().parse("<gradient:#60a5fa:#3b82f6><bold>Your Homes</bold></gradient>"), 6);
 
         Pagination<Home> pagination = new Pagination<>(homes, PAGE_SIZE);

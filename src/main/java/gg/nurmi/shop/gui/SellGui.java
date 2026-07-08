@@ -1,6 +1,6 @@
 package gg.nurmi.shop.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.shop.ShopItem;
 import gg.nurmi.util.ItemBuilder;
@@ -24,10 +24,10 @@ public final class SellGui extends AbstractGui {
     private static final int CONFIRM_SLOT = 49;
     private static final int CLOSE_SLOT = 53;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private boolean returned;
 
-    public SellGui(CanvasSuitePlugin plugin) {
+    public SellGui(OneSMPPlugin plugin) {
         super(plugin, plugin.messages().parse("<gradient:#fb923c:#f87171><bold>Sell Items</bold></gradient>"), 6);
         this.plugin = plugin;
 

@@ -1,6 +1,6 @@
 package gg.nurmi.scoreboard;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,13 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ScoreboardManager {
 
-    private static final String OBJECTIVE_NAME = "canvassuite_sb";
+    private static final String OBJECTIVE_NAME = "onesmp_sb";
     private static final char[] HEX = "0123456789abcdef".toCharArray();
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<UUID, Scoreboard> boards = new ConcurrentHashMap<>();
 
-    public ScoreboardManager(CanvasSuitePlugin plugin) {
+    public ScoreboardManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

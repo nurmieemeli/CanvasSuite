@@ -88,7 +88,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
 import java.util.Set;
 
-public final class CanvasSuitePlugin extends JavaPlugin {
+public final class OneSMPPlugin extends JavaPlugin {
 
     private SchedulerUtil schedulerUtil;
     private Database database;
@@ -98,6 +98,7 @@ public final class CanvasSuitePlugin extends JavaPlugin {
     private EconomyManager economyManager;
     private Expansion economyPlaceholderExpansion;
     private ShopManager shopManager;
+    private CrateManager crateManager;
     private TeleportExecutor teleportExecutor;
     private GuildManager guildManager;
     private GuildChatToggle guildChatToggle;
@@ -148,6 +149,18 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         registerHolograms();
 
         new AliasManager(this).applyAliases();
+
+        Objects.requireNonNull(getCommand("onesmp")).setExecutor(new OneSMPCommand(this));
+    }
+
+    // aliases.yml is intentionally excluded - its command aliases are registered into Bukkit's command map once at enable and can't be cleanly re-registered at runtime.
+    public void reloadAll() {
+        ConfigMigrator.migrate(this, "config.yml", Set.of("rtp.worlds"));
+        reloadConfig();
+        messageService.reload();
+        shopManager.load();
+        crateManager.reload();
+        subcommandAliases.load();
     }
 
     private void registerStats() {
@@ -306,7 +319,7 @@ public final class CanvasSuitePlugin extends JavaPlugin {
     }
 
     private void registerCrates() {
-        CrateManager crateManager = new CrateManager(this);
+        this.crateManager = new CrateManager(this);
         Objects.requireNonNull(getCommand("crate")).setExecutor(new CrateCommand(this, crateManager));
         getServer().getPluginManager().registerEvents(new CrateListener(this, crateManager), this);
     }
@@ -349,7 +362,7 @@ public final class CanvasSuitePlugin extends JavaPlugin {
         if (database != null) {
             database.close();
         }
-        getLogger().info("CanvasSuite disabled.");
+        getLogger().info("OneSMP disabled.");
     }
 
     public SchedulerUtil scheduler() {
@@ -378,6 +391,10 @@ public final class CanvasSuitePlugin extends JavaPlugin {
 
     public ShopManager shop() {
         return shopManager;
+    }
+
+    public CrateManager crates() {
+        return crateManager;
     }
 
     public TeleportExecutor teleportExecutor() {

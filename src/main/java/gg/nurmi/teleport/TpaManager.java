@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,10 +16,10 @@ public final class TpaManager {
     public record TpaRequest(UUID requester, UUID target, boolean here, long expiresAtMillis) {
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<UUID, TpaRequest> incomingByTarget = new ConcurrentHashMap<>();
 
-    public TpaManager(CanvasSuitePlugin plugin) {
+    public TpaManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         startCleanupTask();
     }

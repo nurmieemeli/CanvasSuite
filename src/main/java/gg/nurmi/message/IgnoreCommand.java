@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -12,10 +12,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class IgnoreCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final PrivateMessageManager messageManager;
 
-    public IgnoreCommand(CanvasSuitePlugin plugin, PrivateMessageManager messageManager) {
+    public IgnoreCommand(OneSMPPlugin plugin, PrivateMessageManager messageManager) {
         this.plugin = plugin;
         this.messageManager = messageManager;
     }
@@ -26,7 +26,7 @@ public final class IgnoreCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.msg.use")) {
+        if (!player.hasPermission("onesmp.msg.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

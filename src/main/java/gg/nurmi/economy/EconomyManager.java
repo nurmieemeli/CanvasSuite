@@ -1,6 +1,6 @@
 package gg.nurmi.economy;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 
 import java.math.BigDecimal;
@@ -22,13 +22,13 @@ public final class EconomyManager {
     public record BalanceEntry(UUID uuid, String name, BigDecimal balance) {
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final ConcurrentHashMap<UUID, BigDecimal> cache = new ConcurrentHashMap<>();
     private final BigDecimal startingBalance;
     private final BigDecimal maxBalance;
 
-    public EconomyManager(CanvasSuitePlugin plugin) {
+    public EconomyManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
         this.startingBalance = BigDecimal.valueOf(plugin.getConfig().getDouble("economy.starting-balance", 100))

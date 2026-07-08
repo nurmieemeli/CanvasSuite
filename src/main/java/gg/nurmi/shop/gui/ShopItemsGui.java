@@ -1,6 +1,6 @@
 package gg.nurmi.shop.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.gui.Pagination;
 import gg.nurmi.shop.ShopCategory;
@@ -27,9 +27,9 @@ public final class ShopItemsGui extends AbstractGui {
     private static final int CLOSE_SLOT = 49;
     private static final int NEXT_SLOT = 50;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public ShopItemsGui(CanvasSuitePlugin plugin, ShopCategory category, int page) {
+    public ShopItemsGui(OneSMPPlugin plugin, ShopCategory category, int page) {
         super(plugin, plugin.messages().parse(category.displayName()), 6);
         this.plugin = plugin;
 

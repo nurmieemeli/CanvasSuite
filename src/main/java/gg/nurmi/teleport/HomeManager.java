@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,20 +22,20 @@ public final class HomeManager {
         CREATED, UPDATED, LIMIT_REACHED
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
 
-    public HomeManager(CanvasSuitePlugin plugin) {
+    public HomeManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
     }
 
-    // Highest home limit granted by any canvassuite.home.limit.<n> permission the player has, default otherwise.
+    // Highest home limit granted by any onesmp.home.limit.<n> permission the player has, default otherwise.
     public int resolveLimit(Player player) {
-        if (player.hasPermission("canvassuite.home.unlimited")) {
+        if (player.hasPermission("onesmp.home.unlimited")) {
             return Integer.MAX_VALUE;
         }
-        String prefix = plugin.getConfig().getString("teleport.home-limit-permission-prefix", "canvassuite.home.limit.");
+        String prefix = plugin.getConfig().getString("teleport.home-limit-permission-prefix", "onesmp.home.limit.");
         int limit = plugin.getConfig().getInt("teleport.default-home-limit", 3);
         for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
             if (!info.getValue() || !info.getPermission().startsWith(prefix)) {

@@ -1,5 +1,5 @@
 # Every value here supports MiniMessage formatting and MiniPlaceholders tags.
-prefix: "<gradient:#38bdf8:#818cf8><bold>Canvas</bold></gradient><dark_gray> » </dark_gray>"
+prefix: "<gradient:#38bdf8:#818cf8><bold>OneSMP</bold></gradient><dark_gray> » </dark_gray>"
 
 general:
   no-permission: "<prefix><red>You don't have permission to do that."
@@ -129,7 +129,7 @@ moderation:
   packetevents-required: "<prefix><red>This feature requires the PacketEvents plugin to be installed on the server."
 
 tablist:
-  header: "<newline><gradient:#38bdf8:#818cf8><bold>CanvasSuite</bold></gradient><newline>"
+  header: "<newline><gradient:#38bdf8:#818cf8><bold>OneSMP</bold></gradient><newline>"
   footer: "<newline><gray>/discord /store /help<newline>"
   name-format: "<luckperms_prefix><player_name>"
   # Shown instead of an 80th individual entry once more real players are online than the grid has room for.

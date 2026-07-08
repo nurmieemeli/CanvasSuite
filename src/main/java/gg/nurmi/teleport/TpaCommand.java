@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -11,11 +11,11 @@ import org.jspecify.annotations.NonNull;
 
 public final class TpaCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final TpaManager tpaManager;
     private final boolean here;
 
-    public TpaCommand(CanvasSuitePlugin plugin, TpaManager tpaManager, boolean here) {
+    public TpaCommand(OneSMPPlugin plugin, TpaManager tpaManager, boolean here) {
         this.plugin = plugin;
         this.tpaManager = tpaManager;
         this.here = here;
@@ -27,7 +27,7 @@ public final class TpaCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.tpa.use")) {
+        if (!player.hasPermission("onesmp.tpa.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

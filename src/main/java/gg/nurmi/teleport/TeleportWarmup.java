@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class TeleportWarmup {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Set<UUID> pending = ConcurrentHashMap.newKeySet();
 
-    public TeleportWarmup(CanvasSuitePlugin plugin) {
+    public TeleportWarmup(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

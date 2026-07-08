@@ -4,7 +4,7 @@ import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.HologramManager;
 import de.oliver.fancyholograms.api.data.TextHologramData;
 import de.oliver.fancyholograms.api.hologram.Hologram;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.stats.StatsManager;
 import gg.nurmi.util.Database;
 import org.bukkit.Location;
@@ -31,11 +31,11 @@ public final class LeaderboardHologramManager {
     public record HologramInfo(String name, StatsManager.StatType statType, int limit) {
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final Map<String, LeaderboardEntry> registry = new ConcurrentHashMap<>();
 
-    public LeaderboardHologramManager(CanvasSuitePlugin plugin) {
+    public LeaderboardHologramManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
         load();

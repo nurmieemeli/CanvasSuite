@@ -1,6 +1,6 @@
 package gg.nurmi.world;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.world.WorldSettings.GeneratorMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -30,11 +30,11 @@ public final class WorldManager {
 
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{3,32}$");
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<String, WorldSettings> managed = new LinkedHashMap<>();
     private final Map<UUID, WorldSettings> pendingSessions = new ConcurrentHashMap<>();
 
-    public WorldManager(CanvasSuitePlugin plugin) {
+    public WorldManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -72,20 +72,19 @@ public final class WorldManager {
             }
 
             File folder = world.getWorldFolder();
-            Bukkit.unloadWorldAsync(world, false, unloaded -> {
-                managed.remove(name);
-                save();
+            boolean unloaded = Bukkit.unloadWorld(world, false);
+            managed.remove(name);
+            save();
 
-                if (!unloaded) {
-                    onDone.accept(false);
-                    return;
-                }
-                if (!wipeFiles) {
-                    onDone.accept(true);
-                    return;
-                }
-                plugin.scheduler().runAsync(() -> onDone.accept(deleteRecursively(folder.toPath())));
-            });
+            if (!unloaded) {
+                onDone.accept(false);
+                return;
+            }
+            if (!wipeFiles) {
+                onDone.accept(true);
+                return;
+            }
+            plugin.scheduler().runAsync(() -> onDone.accept(deleteRecursively(folder.toPath())));
         });
     }
 

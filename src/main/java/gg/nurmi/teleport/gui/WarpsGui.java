@@ -1,6 +1,6 @@
 package gg.nurmi.teleport.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.gui.Pagination;
 import gg.nurmi.teleport.TeleportExecutor;
@@ -15,11 +15,11 @@ import java.util.List;
 
 public final class WarpsGui extends AbstractGui {
 
-    public WarpsGui(CanvasSuitePlugin plugin, TeleportExecutor teleportExecutor, List<Warp> warps) {
+    public WarpsGui(OneSMPPlugin plugin, TeleportExecutor teleportExecutor, List<Warp> warps) {
         this(plugin, teleportExecutor, warps, 0);
     }
 
-    public WarpsGui(CanvasSuitePlugin plugin, TeleportExecutor teleportExecutor, List<Warp> warps, int page) {
+    public WarpsGui(OneSMPPlugin plugin, TeleportExecutor teleportExecutor, List<Warp> warps, int page) {
         super(plugin, plugin.messages().parse("<gradient:#c084fc:#a855f7><bold>Server Warps</bold></gradient>"), 6);
 
         Pagination<Warp> pagination = new Pagination<>(warps, PAGE_SIZE);

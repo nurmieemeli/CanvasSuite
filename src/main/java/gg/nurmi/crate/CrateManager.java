@@ -4,7 +4,7 @@ import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.HologramManager;
 import de.oliver.fancyholograms.api.data.TextHologramData;
 import de.oliver.fancyholograms.api.hologram.Hologram;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.ConfigMigrator;
 import gg.nurmi.util.Database;
 import gg.nurmi.util.ItemBuilder;
@@ -44,18 +44,22 @@ public final class CrateManager {
         }
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final NamespacedKey keyDataKey;
     private final Map<String, CrateType> types = new LinkedHashMap<>();
     private final Map<BlockKey, String> boundBlocks = new ConcurrentHashMap<>();
 
-    public CrateManager(CanvasSuitePlugin plugin) {
+    public CrateManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
         this.keyDataKey = new NamespacedKey(plugin, "crate_key");
         loadTypes();
         loadBoundBlocks();
+    }
+
+    public void reload() {
+        loadTypes();
     }
 
     private void loadTypes() {
@@ -99,7 +103,8 @@ public final class CrateManager {
                             parseItems(rewardSection.getConfigurationSection("items"), key, rewardKey),
                             rewardSection.getDouble("money", 0),
                             rewardSection.getStringList("commands"),
-                            rewardSection.getBoolean("broadcast", false)
+                            rewardSection.getBoolean("broadcast", false),
+                            parseDisplayItem(rewardSection.getString("display-item"), key, rewardKey)
                     ));
                 }
             }
@@ -109,6 +114,18 @@ public final class CrateManager {
 
             types.put(key, new CrateType(key, displayName, keyName, keyLore, keyMaterial, rewards));
         }
+    }
+
+    private Material parseDisplayItem(String materialKey, String crateKey, String rewardKey) {
+        if (materialKey == null) {
+            return null;
+        }
+        Material material = Material.matchMaterial(materialKey);
+        if (material == null) {
+            plugin.getLogger().warning("crates.yml: unknown display-item '" + materialKey + "' in crate '" + crateKey
+                    + "' reward '" + rewardKey + "', ignoring.");
+        }
+        return material;
     }
 
     private Map<Material, Integer> parseItems(ConfigurationSection itemsSection, String crateKey, String rewardKey) {
@@ -276,7 +293,7 @@ public final class CrateManager {
                 return reward;
             }
         }
-        return type.rewards().get(type.rewards().size() - 1);
+        return type.rewards().getLast();
     }
 
     public void grantReward(Player player, CrateType type, CrateReward reward) {

@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.Guild;
 import gg.nurmi.guild.GuildMember;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -15,9 +15,9 @@ import org.bukkit.event.Listener;
 
 public final class ChatFormatListener implements Listener {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public ChatFormatListener(CanvasSuitePlugin plugin) {
+    public ChatFormatListener(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -80,7 +80,7 @@ public final class ChatFormatListener implements Listener {
 
     private Component renderMessageContent(AsyncChatEvent event, Player sender) {
         String plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message());
-        return sender.hasPermission("canvassuite.chat.format")
+        return sender.hasPermission("onesmp.chat.format")
                 ? plugin.messages().parse(plainMessage)
                 : Component.text(plainMessage);
     }

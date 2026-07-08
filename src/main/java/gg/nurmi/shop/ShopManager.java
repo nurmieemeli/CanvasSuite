@@ -1,6 +1,6 @@
 package gg.nurmi.shop;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.ConfigMigrator;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,10 +13,10 @@ import java.util.Set;
 
 public final class ShopManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Map<String, ShopCategory> categories = new LinkedHashMap<>();
 
-    public ShopManager(CanvasSuitePlugin plugin) {
+    public ShopManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         load();
     }

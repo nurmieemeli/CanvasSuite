@@ -1,6 +1,6 @@
 package gg.nurmi.guild.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.Guild;
 import gg.nurmi.guild.GuildManager;
 import gg.nurmi.guild.GuildMember;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public final class GuildMainGui extends AbstractGui {
 
-    public GuildMainGui(CanvasSuitePlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid) {
+    public GuildMainGui(OneSMPPlugin plugin, GuildManager guildManager, Guild guild, UUID viewerUuid) {
         super(plugin, plugin.messages().parse("<gradient:#fbbf24:#f59e0b><bold><guild_name></bold></gradient> <gray>[<guild_tag>]</gray>",
                 Placeholder.unparsed("guild_name", guild.name()), Placeholder.unparsed("guild_tag", guild.tag())), 3);
 

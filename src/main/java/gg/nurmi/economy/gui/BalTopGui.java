@@ -1,7 +1,7 @@
 package gg.nurmi.economy.gui;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.economy.EconomyManager;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.util.ItemBuilder;
@@ -18,7 +18,7 @@ public final class BalTopGui extends AbstractGui {
     private static final int ROWS = 6;
     private static final int CLOSE_SLOT = 49;
 
-    public BalTopGui(CanvasSuitePlugin plugin, List<EconomyManager.BalanceEntry> entries) {
+    public BalTopGui(OneSMPPlugin plugin, List<EconomyManager.BalanceEntry> entries) {
         super(plugin, plugin.messages().parse("<gradient:#facc15:#fbbf24><bold>Balance Leaderboard</bold></gradient>"), ROWS);
 
         for (int i = 0; i < entries.size() && i < 45; i++) {

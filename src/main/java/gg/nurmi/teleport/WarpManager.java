@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 import org.bukkit.Location;
 
@@ -16,10 +16,10 @@ import java.util.concurrent.CompletableFuture;
 
 public final class WarpManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
 
-    public WarpManager(CanvasSuitePlugin plugin) {
+    public WarpManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
     }

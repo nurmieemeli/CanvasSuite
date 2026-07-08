@@ -1,6 +1,6 @@
 package gg.nurmi.economy;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.economy.gui.BalTopGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,10 +10,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class BalTopCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final EconomyManager economyManager;
 
-    public BalTopCommand(CanvasSuitePlugin plugin, EconomyManager economyManager) {
+    public BalTopCommand(OneSMPPlugin plugin, EconomyManager economyManager) {
         this.plugin = plugin;
         this.economyManager = economyManager;
     }
@@ -24,7 +24,7 @@ public final class BalTopCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.economy.use")) {
+        if (!player.hasPermission("onesmp.economy.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

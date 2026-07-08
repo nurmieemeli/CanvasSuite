@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.ConfigMigrator;
 import io.github.miniplaceholders.api.MiniPlaceholders;
 import io.github.miniplaceholders.api.types.RelationalAudience;
@@ -22,12 +22,12 @@ import java.util.Objects;
 
 public final class MessageService {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private YamlConfiguration messages;
     private Component prefixComponent = Component.empty();
 
-    public MessageService(CanvasSuitePlugin plugin) {
+    public MessageService(OneSMPPlugin plugin) {
         this.plugin = plugin;
         reload();
     }

@@ -1,6 +1,6 @@
 package gg.nurmi.guild;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import io.github.miniplaceholders.api.Expansion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -15,7 +15,7 @@ public final class GuildPlaceholderExpansion {
     private GuildPlaceholderExpansion() {
     }
 
-    public static Expansion register(CanvasSuitePlugin plugin, GuildManager guildManager) {
+    public static Expansion register(OneSMPPlugin plugin, GuildManager guildManager) {
         Component noGuild = plugin.messages().parse(plugin.getConfig().getString("guild.no-guild-placeholder", "No Guild"));
 
         Expansion expansion = Expansion.builder("guild")

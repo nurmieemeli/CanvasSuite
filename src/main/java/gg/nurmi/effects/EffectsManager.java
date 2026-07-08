@@ -1,6 +1,6 @@
 package gg.nurmi.effects;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 // Purely cosmetic sound/particle feedback - safe to call unconditionally, it never affects behavior.
 public final class EffectsManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public EffectsManager(CanvasSuitePlugin plugin) {
+    public EffectsManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

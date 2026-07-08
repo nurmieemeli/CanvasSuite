@@ -1,6 +1,6 @@
 package gg.nurmi.teleport.rtp;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.teleport.rtp.gui.RtpWorldSelectGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -17,10 +17,10 @@ import java.util.Locale;
 
 public final class RtpCommand implements CommandExecutor, TabCompleter {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final RtpManager rtpManager;
 
-    public RtpCommand(CanvasSuitePlugin plugin, RtpManager rtpManager) {
+    public RtpCommand(OneSMPPlugin plugin, RtpManager rtpManager) {
         this.plugin = plugin;
         this.rtpManager = rtpManager;
     }
@@ -31,7 +31,7 @@ public final class RtpCommand implements CommandExecutor, TabCompleter {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.rtp.use")) {
+        if (!player.hasPermission("onesmp.rtp.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

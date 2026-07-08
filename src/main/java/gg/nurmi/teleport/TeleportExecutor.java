@@ -1,15 +1,15 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public final class TeleportExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final TeleportWarmup warmup;
 
-    public TeleportExecutor(CanvasSuitePlugin plugin, TeleportWarmup warmup) {
+    public TeleportExecutor(OneSMPPlugin plugin, TeleportWarmup warmup) {
         this.plugin = plugin;
         this.warmup = warmup;
     }

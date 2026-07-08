@@ -5,24 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>gg.nurmi</groupId>
-    <artifactId>CanvasSuite</artifactId>
+    <artifactId>OneSMP</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>CanvasSuite</name>
-    <description>All-in-one SMP plugin for CanvasMC</description>
+    <name>OneSMP</name>
+    <description>All-in-one SMP plugin for Folia - Seek no more, you've found it.</description>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <canvas.version>1.21.8-R0.1-SNAPSHOT</canvas.version>
+        <folia.version>1.21.8-R0.1-SNAPSHOT</folia.version>
     </properties>
 
     <repositories>
-        <repository>
-            <id>canvasmc</id>
-            <url>https://maven.canvasmc.io/snapshots</url>
-        </repository>
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
@@ -46,11 +42,11 @@
     </repositories>
 
     <dependencies>
-        <!-- CanvasMC server API (Folia/Paper/Bukkit surface) -->
+        <!-- Folia server API (Paper/Bukkit surface plus the region threading scheduler) -->
         <dependency>
-            <groupId>io.canvasmc.canvas</groupId>
-            <artifactId>canvas-api</artifactId>
-            <version>${canvas.version}</version>
+            <groupId>dev.folia</groupId>
+            <artifactId>folia-api</artifactId>
+            <version>${folia.version}</version>
             <scope>provided</scope>
         </dependency>
 

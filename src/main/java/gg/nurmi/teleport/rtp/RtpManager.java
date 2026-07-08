@@ -1,6 +1,6 @@
 package gg.nurmi.teleport.rtp;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Cooldown;
 import gg.nurmi.util.LocationUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -24,13 +24,13 @@ import java.util.function.Consumer;
 
 public final class RtpManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Cooldown cooldown = new Cooldown();
     private final Random random = new Random();
     private final Map<String, ConcurrentLinkedDeque<Location>> precache = new ConcurrentHashMap<>();
     private final AtomicBoolean filling = new AtomicBoolean();
 
-    public RtpManager(CanvasSuitePlugin plugin) {
+    public RtpManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -80,7 +80,7 @@ public final class RtpManager {
             return;
         }
 
-        boolean bypassCooldown = player.hasPermission("canvassuite.rtp.admin");
+        boolean bypassCooldown = player.hasPermission("onesmp.rtp.admin");
         if (!bypassCooldown && isOnCooldown(player.getUniqueId())) {
             plugin.messages().send(player, "rtp.cooldown",
                     Placeholder.unparsed("seconds", String.valueOf(cooldownRemaining(player.getUniqueId()))));

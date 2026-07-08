@@ -36,7 +36,7 @@ teleport:
   tpa-request-timeout-seconds: 60
   teleport-warmup-seconds: 3
   cancel-warmup-on-move: true
-  home-limit-permission-prefix: "canvassuite.home.limit."
+  home-limit-permission-prefix: "onesmp.home.limit."
   default-home-limit: 3
 
 rtp:
@@ -92,7 +92,7 @@ protection:
   disable-nether-portal-creation: true
 
 spawn:
-  # The void world CanvasSuite creates automatically on first enable.
+  # The void world OneSMP creates automatically on first enable.
   world-name: "spawnworld"
   # The current spawn point's world; only used as a default until /setspawn is run once.
   world: "spawnworld"
@@ -150,7 +150,7 @@ world-creation:
 scoreboard:
   enabled: true
   refresh-interval-seconds: 5
-  title: "<gradient:#38bdf8:#818cf8><bold>CanvasSuite</bold></gradient>"
+  title: "<gradient:#38bdf8:#818cf8><bold>OneSMP</bold></gradient>"
   # Rendered per viewer; besides MiniPlaceholders tags, also supports <stats_*>, <economy_balance>, and <guild_own_name>/<guild_own_tag>.
   lines:
     - "<gradient:#818cf8:#38bdf8><strikethrough>                         </strikethrough>"

@@ -1,7 +1,7 @@
 package gg.nurmi.stats.gui;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.stats.StatsManager;
 import gg.nurmi.util.ItemBuilder;
@@ -19,7 +19,7 @@ public final class StatsTopGui extends AbstractGui {
     private static final int ROWS = 6;
     private static final int CLOSE_SLOT = 49;
 
-    public StatsTopGui(CanvasSuitePlugin plugin, String title, List<StatsManager.TopEntry> entries, LongFunction<String> valueFormatter) {
+    public StatsTopGui(OneSMPPlugin plugin, String title, List<StatsManager.TopEntry> entries, LongFunction<String> valueFormatter) {
         super(plugin, plugin.messages().parse(title), ROWS);
 
         for (int i = 0; i < entries.size() && i < 45; i++) {

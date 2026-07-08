@@ -1,6 +1,6 @@
 package gg.nurmi.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,12 +28,12 @@ public abstract class AbstractGui implements InventoryHolder {
     private static final int CLOSE_SLOT = 49;
     private static final int NEXT_SLOT = 50;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Inventory inventory;
     private final Map<Integer, GuiButton> buttons = new HashMap<>();
     private final Set<Integer> openSlots = new HashSet<>();
 
-    protected AbstractGui(CanvasSuitePlugin plugin, Component title, int rows) {
+    protected AbstractGui(OneSMPPlugin plugin, Component title, int rows) {
         this.plugin = plugin;
         this.inventory = Bukkit.createInventory(this, rows * 9, title);
     }

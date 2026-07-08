@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public final class TpDenyCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final TpaManager tpaManager;
 
-    public TpDenyCommand(CanvasSuitePlugin plugin, TpaManager tpaManager) {
+    public TpDenyCommand(OneSMPPlugin plugin, TpaManager tpaManager) {
         this.plugin = plugin;
         this.tpaManager = tpaManager;
     }

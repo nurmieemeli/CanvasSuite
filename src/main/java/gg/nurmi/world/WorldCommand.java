@@ -1,6 +1,6 @@
 package gg.nurmi.world;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.world.gui.WorldCreationGui;
 import gg.nurmi.world.gui.WorldListGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -20,10 +20,10 @@ public final class WorldCommand implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBCOMMANDS = List.of("create", "list", "delete", "teleport");
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final WorldManager worldManager;
 
-    public WorldCommand(CanvasSuitePlugin plugin, WorldManager worldManager) {
+    public WorldCommand(OneSMPPlugin plugin, WorldManager worldManager) {
         this.plugin = plugin;
         this.worldManager = worldManager;
     }
@@ -34,7 +34,7 @@ public final class WorldCommand implements CommandExecutor, TabCompleter {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.world.admin")) {
+        if (!player.hasPermission("onesmp.world.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

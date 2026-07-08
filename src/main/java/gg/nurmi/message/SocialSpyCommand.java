@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,10 +9,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class SocialSpyCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final SocialSpyToggle socialSpy;
 
-    public SocialSpyCommand(CanvasSuitePlugin plugin, SocialSpyToggle socialSpy) {
+    public SocialSpyCommand(OneSMPPlugin plugin, SocialSpyToggle socialSpy) {
         this.plugin = plugin;
         this.socialSpy = socialSpy;
     }
@@ -23,7 +23,7 @@ public final class SocialSpyCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.msg.socialspy")) {
+        if (!player.hasPermission("onesmp.msg.socialspy")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

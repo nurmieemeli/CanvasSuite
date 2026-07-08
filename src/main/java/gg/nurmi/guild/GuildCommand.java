@@ -1,6 +1,6 @@
 package gg.nurmi.guild;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.gui.GuildMainGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -21,11 +21,11 @@ public final class GuildCommand implements CommandExecutor, TabCompleter {
             "create", "disband", "invite", "accept", "kick", "promote", "demote",
             "sethome", "home", "info", "list", "chat", "leave", "gui");
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final GuildManager guildManager;
     private final GuildChatToggle chatToggle;
 
-    public GuildCommand(CanvasSuitePlugin plugin, GuildManager guildManager, GuildChatToggle chatToggle) {
+    public GuildCommand(OneSMPPlugin plugin, GuildManager guildManager, GuildChatToggle chatToggle) {
         this.plugin = plugin;
         this.guildManager = guildManager;
         this.chatToggle = chatToggle;
@@ -37,7 +37,7 @@ public final class GuildCommand implements CommandExecutor, TabCompleter {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.guild.use")) {
+        if (!player.hasPermission("onesmp.guild.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

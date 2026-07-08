@@ -1,6 +1,6 @@
 package gg.nurmi.teleport;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,10 +10,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class SetHomeCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final HomeManager homeManager;
 
-    public SetHomeCommand(CanvasSuitePlugin plugin, HomeManager homeManager) {
+    public SetHomeCommand(OneSMPPlugin plugin, HomeManager homeManager) {
         this.plugin = plugin;
         this.homeManager = homeManager;
     }
@@ -24,7 +24,7 @@ public final class SetHomeCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.home.use")) {
+        if (!player.hasPermission("onesmp.home.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

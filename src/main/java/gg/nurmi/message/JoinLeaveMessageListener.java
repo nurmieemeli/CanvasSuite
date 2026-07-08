@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class JoinLeaveMessageListener implements Listener {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public JoinLeaveMessageListener(CanvasSuitePlugin plugin) {
+    public JoinLeaveMessageListener(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

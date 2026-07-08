@@ -1,6 +1,6 @@
 package gg.nurmi.crate.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.crate.CrateManager;
 import gg.nurmi.crate.CrateReward;
 import gg.nurmi.crate.CrateType;
@@ -29,14 +29,14 @@ public final class CrateOpeningGui extends AbstractGui {
     private static final long MAX_DELAY = 9;
     private static final long HOLD_TICKS = 40;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final CrateManager crateManager;
     private final CrateType type;
     private final CrateReward reward;
     private final List<CrateReward> reel = new ArrayList<>(REEL_SIZE);
     private boolean finished;
 
-    public CrateOpeningGui(CanvasSuitePlugin plugin, CrateManager crateManager, CrateType type, CrateReward reward) {
+    public CrateOpeningGui(OneSMPPlugin plugin, CrateManager crateManager, CrateType type, CrateReward reward) {
         super(plugin, plugin.messages().parse("<gradient:#fbbf24:#f59e0b><bold><type></bold></gradient>",
                 Placeholder.component("type", plugin.messages().parse(type.displayName()))), ROWS);
         this.plugin = plugin;
@@ -96,9 +96,7 @@ public final class CrateOpeningGui extends AbstractGui {
     }
 
     private ItemStack iconFor(CrateReward reward, boolean glow) {
-        Material material = reward.items().keySet().stream().findFirst()
-                .orElse(reward.money() > 0 ? Material.GOLD_INGOT : Material.NETHER_STAR);
-        return new ItemBuilder(material)
+        return new ItemBuilder(reward.iconMaterial())
                 .name(plugin.messages().parse(reward.displayName()))
                 .glow(glow)
                 .build();

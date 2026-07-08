@@ -1,6 +1,6 @@
 package gg.nurmi.moderation;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,10 +12,10 @@ import org.jspecify.annotations.NonNull;
 
 public final class SpectateCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final SpectateManager spectateManager;
 
-    public SpectateCommand(CanvasSuitePlugin plugin, SpectateManager spectateManager) {
+    public SpectateCommand(OneSMPPlugin plugin, SpectateManager spectateManager) {
         this.plugin = plugin;
         this.spectateManager = spectateManager;
     }
@@ -26,7 +26,7 @@ public final class SpectateCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.moderation.spectate")) {
+        if (!player.hasPermission("onesmp.moderation.spectate")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

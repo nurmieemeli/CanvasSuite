@@ -1,6 +1,6 @@
 package gg.nurmi.teleport.rtp.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.gui.Pagination;
 import gg.nurmi.teleport.rtp.RtpManager;
@@ -16,11 +16,11 @@ import java.util.List;
 
 public final class RtpWorldSelectGui extends AbstractGui {
 
-    public RtpWorldSelectGui(CanvasSuitePlugin plugin, RtpManager rtpManager) {
+    public RtpWorldSelectGui(OneSMPPlugin plugin, RtpManager rtpManager) {
         this(plugin, rtpManager, 0);
     }
 
-    public RtpWorldSelectGui(CanvasSuitePlugin plugin, RtpManager rtpManager, int page) {
+    public RtpWorldSelectGui(OneSMPPlugin plugin, RtpManager rtpManager, int page) {
         super(plugin, plugin.messages().parse("<gradient:#34d399:#10b981><bold>Random Teleport</bold></gradient>"), 6);
 
         List<World> worlds = rtpManager.enabledWorlds();

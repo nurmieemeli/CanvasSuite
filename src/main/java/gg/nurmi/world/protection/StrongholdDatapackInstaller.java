@@ -1,6 +1,6 @@
 package gg.nurmi.world.protection;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 // There's no direct API to disable a vanilla structure; this writes a per-world datapack that overrides the stronghold structure_set's count to 0 instead.
 public final class StrongholdDatapackInstaller {
 
-    private static final String PACK_NAME = "canvassuite_no_stronghold";
+    private static final String PACK_NAME = "onesmp_no_stronghold";
 
     private static final String STRUCTURE_SET_JSON = """
             {
@@ -34,14 +34,14 @@ public final class StrongholdDatapackInstaller {
               "pack": {
                 "pack_format": 48,
                 "supported_formats": { "min_inclusive": 6, "max_inclusive": 100 },
-                "description": "CanvasSuite: disables stronghold generation"
+                "description": "OneSMP: disables stronghold generation"
               }
             }
             """;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public StrongholdDatapackInstaller(CanvasSuitePlugin plugin) {
+    public StrongholdDatapackInstaller(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -37,7 +37,7 @@ public final class VaultEconomyProvider implements Economy {
 
     @Override
     public String getName() {
-        return "CanvasSuite";
+        return "OneSMP";
     }
 
     @Override

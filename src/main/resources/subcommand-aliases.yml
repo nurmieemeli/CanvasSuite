@@ -32,3 +32,5 @@ crate:
   create: [c]
   remove: [delete, del]
   key: []
+onesmp:
+  reload: []

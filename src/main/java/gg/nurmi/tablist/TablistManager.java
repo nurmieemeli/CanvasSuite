@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoRemove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate.Action;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -37,14 +37,14 @@ public final class TablistManager {
             Action.ADD_PLAYER, Action.UPDATE_LISTED, Action.UPDATE_GAME_MODE,
             Action.UPDATE_DISPLAY_NAME, Action.UPDATE_LIST_ORDER);
     private static final EnumSet<Action> LISTED_ACTIONS = EnumSet.of(Action.UPDATE_LISTED);
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final List<UUID> slotIds;
     private final List<TextureProperty> fillerSkin;
     private final AtomicLong generation = new AtomicLong();
     private final UUID[] slotOccupant = new UUID[MAX_SLOTS];
     private final Object layoutLock = new Object();
 
-    public TablistManager(CanvasSuitePlugin plugin) {
+    public TablistManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.slotIds = new ArrayList<>(MAX_SLOTS);
         for (int i = 0; i < MAX_SLOTS; i++) {
@@ -220,7 +220,7 @@ public final class TablistManager {
     private record PlayerSnapshot(UUID uuid, String name, int ping, GameMode gameMode, List<TextureProperty> textures,
                                   Component displayName, int weight) {
 
-        static PlayerSnapshot of(CanvasSuitePlugin plugin, Player player) {
+        static PlayerSnapshot of(OneSMPPlugin plugin, Player player) {
             PlayerProfile profile = player.getPlayerProfile();
             List<TextureProperty> textures = new ArrayList<>();
             for (ProfileProperty property : profile.getProperties()) {

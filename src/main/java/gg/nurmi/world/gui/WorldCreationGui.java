@@ -1,6 +1,6 @@
 package gg.nurmi.world.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.util.ItemBuilder;
 import gg.nurmi.world.WorldManager;
@@ -28,17 +28,17 @@ public final class WorldCreationGui extends AbstractGui {
     private static final int CREATE_SLOT = 49;
     private static final int CANCEL_SLOT = 53;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final WorldManager worldManager;
     private final UUID adminUuid;
     private final WorldSettings settings;
     private boolean resolved;
 
-    public WorldCreationGui(CanvasSuitePlugin plugin, WorldManager worldManager, UUID adminUuid) {
+    public WorldCreationGui(OneSMPPlugin plugin, WorldManager worldManager, UUID adminUuid) {
         this(plugin, worldManager, adminUuid, worldManager.getSession(adminUuid));
     }
 
-    private WorldCreationGui(CanvasSuitePlugin plugin, WorldManager worldManager, UUID adminUuid, WorldSettings settings) {
+    private WorldCreationGui(OneSMPPlugin plugin, WorldManager worldManager, UUID adminUuid, WorldSettings settings) {
         super(plugin, plugin.messages().parse("<gradient:#34d399:#10b981><bold>Create World</bold></gradient>"), 6);
         this.plugin = plugin;
         this.worldManager = worldManager;

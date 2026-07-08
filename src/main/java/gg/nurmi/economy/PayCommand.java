@@ -1,6 +1,6 @@
 package gg.nurmi.economy;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.CommandUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -16,10 +16,10 @@ import java.util.concurrent.CompletableFuture;
 
 public final class PayCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final EconomyManager economyManager;
 
-    public PayCommand(CanvasSuitePlugin plugin, EconomyManager economyManager) {
+    public PayCommand(OneSMPPlugin plugin, EconomyManager economyManager) {
         this.plugin = plugin;
         this.economyManager = economyManager;
     }
@@ -30,7 +30,7 @@ public final class PayCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.economy.use")) {
+        if (!player.hasPermission("onesmp.economy.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

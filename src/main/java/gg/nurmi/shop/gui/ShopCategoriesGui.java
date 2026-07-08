@@ -1,6 +1,6 @@
 package gg.nurmi.shop.gui;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.gui.AbstractGui;
 import gg.nurmi.shop.ShopCategory;
 import gg.nurmi.util.ItemBuilder;
@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public final class ShopCategoriesGui extends AbstractGui {
 
-    public ShopCategoriesGui(CanvasSuitePlugin plugin) {
+    public ShopCategoriesGui(OneSMPPlugin plugin) {
         super(plugin, plugin.messages().parse("<gradient:#34d399:#10b981><bold>Server Shop</bold></gradient>"), rows(plugin));
 
         for (ShopCategory category : plugin.shop().categories().values()) {
@@ -25,7 +25,7 @@ public final class ShopCategoriesGui extends AbstractGui {
         }
     }
 
-    private static int rows(CanvasSuitePlugin plugin) {
+    private static int rows(OneSMPPlugin plugin) {
         int maxSlot = plugin.shop().categories().values().stream()
                 .mapToInt(ShopCategory::slot)
                 .max()

@@ -1,6 +1,6 @@
 package gg.nurmi.message;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -16,10 +16,10 @@ import java.util.Locale;
 
 public final class MsgCommand implements CommandExecutor, TabCompleter {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final PrivateMessageManager messageManager;
 
-    public MsgCommand(CanvasSuitePlugin plugin, PrivateMessageManager messageManager) {
+    public MsgCommand(OneSMPPlugin plugin, PrivateMessageManager messageManager) {
         this.plugin = plugin;
         this.messageManager = messageManager;
     }
@@ -30,7 +30,7 @@ public final class MsgCommand implements CommandExecutor, TabCompleter {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.msg.use")) {
+        if (!player.hasPermission("onesmp.msg.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

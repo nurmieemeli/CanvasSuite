@@ -1,6 +1,6 @@
 package gg.nurmi.crate;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.CommandUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -20,17 +20,17 @@ public final class CrateCommand implements CommandExecutor {
     private static final String USAGE = "/crate <create|remove|key> ...";
     private static final int MAX_TARGET_DISTANCE = 6;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final CrateManager crateManager;
 
-    public CrateCommand(CanvasSuitePlugin plugin, CrateManager crateManager) {
+    public CrateCommand(OneSMPPlugin plugin, CrateManager crateManager) {
         this.plugin = plugin;
         this.crateManager = crateManager;
     }
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
-        if (!sender.hasPermission("canvassuite.crate.admin")) {
+        if (!sender.hasPermission("onesmp.crate.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

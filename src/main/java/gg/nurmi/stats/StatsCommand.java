@@ -1,6 +1,6 @@
 package gg.nurmi.stats;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.TextUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -15,17 +15,17 @@ import java.util.concurrent.CompletableFuture;
 
 public final class StatsCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final StatsManager statsManager;
 
-    public StatsCommand(CanvasSuitePlugin plugin, StatsManager statsManager) {
+    public StatsCommand(OneSMPPlugin plugin, StatsManager statsManager) {
         this.plugin = plugin;
         this.statsManager = statsManager;
     }
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
-        if (!sender.hasPermission("canvassuite.stats.use")) {
+        if (!sender.hasPermission("onesmp.stats.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

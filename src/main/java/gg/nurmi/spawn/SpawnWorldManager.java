@@ -1,6 +1,6 @@
 package gg.nurmi.spawn;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.world.VoidChunkGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,9 +14,9 @@ import java.util.concurrent.CompletableFuture;
 
 public final class SpawnWorldManager {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public SpawnWorldManager(CanvasSuitePlugin plugin) {
+    public SpawnWorldManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -90,6 +90,6 @@ public final class SpawnWorldManager {
     }
 
     private String voidWorldName() {
-        return plugin.getConfig().getString("spawn.world-name", "canvassuite_spawn");
+        return plugin.getConfig().getString("spawn.world-name", "onesmp_spawn");
     }
 }

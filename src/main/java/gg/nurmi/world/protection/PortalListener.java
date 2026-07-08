@@ -1,6 +1,6 @@
 package gg.nurmi.world.protection;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,9 +8,9 @@ import org.bukkit.event.world.PortalCreateEvent;
 
 public final class PortalListener implements Listener {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public PortalListener(CanvasSuitePlugin plugin) {
+    public PortalListener(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

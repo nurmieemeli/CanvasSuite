@@ -1,6 +1,6 @@
 package gg.nurmi.shop;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.shop.gui.ShopCategoriesGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,9 +10,9 @@ import org.jspecify.annotations.NonNull;
 
 public final class BuyCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
 
-    public BuyCommand(CanvasSuitePlugin plugin) {
+    public BuyCommand(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -22,7 +22,7 @@ public final class BuyCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.shop.use")) {
+        if (!player.hasPermission("onesmp.shop.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

@@ -1,6 +1,6 @@
 package gg.nurmi.stats.hologram;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.stats.StatsManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -18,10 +18,10 @@ public final class LeaderboardHologramCommand implements CommandExecutor, TabCom
     private static final List<String> SUBCOMMANDS = List.of("create", "remove", "list");
     private static final List<String> STAT_TYPES = List.of("kills", "deaths", "killstreak", "playtime");
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final LeaderboardHologramManager hologramManager;
 
-    public LeaderboardHologramCommand(CanvasSuitePlugin plugin, LeaderboardHologramManager hologramManager) {
+    public LeaderboardHologramCommand(OneSMPPlugin plugin, LeaderboardHologramManager hologramManager) {
         this.plugin = plugin;
         this.hologramManager = hologramManager;
     }
@@ -32,7 +32,7 @@ public final class LeaderboardHologramCommand implements CommandExecutor, TabCom
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.stats.hologram.admin")) {
+        if (!player.hasPermission("onesmp.stats.hologram.admin")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

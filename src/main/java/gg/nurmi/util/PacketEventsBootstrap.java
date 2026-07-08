@@ -1,14 +1,14 @@
 package gg.nurmi.util;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Bukkit;
 
 public final class PacketEventsBootstrap {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private boolean available;
 
-    public PacketEventsBootstrap(CanvasSuitePlugin plugin) {
+    public PacketEventsBootstrap(OneSMPPlugin plugin) {
         this.plugin = plugin;
     }
 

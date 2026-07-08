@@ -14,7 +14,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoRemove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,10 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 // Packet-level vanish (not Bukkit's vanish API): hide()/show() immediately remove/re-add the moderator for already-connected viewers, while the packet listener keeps filtering them out of every future tablist/spawn packet for as long as they're hidden.
 public final class PacketVanishController {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Set<UUID> hidden = ConcurrentHashMap.newKeySet();
 
-    public PacketVanishController(CanvasSuitePlugin plugin) {
+    public PacketVanishController(OneSMPPlugin plugin) {
         this.plugin = plugin;
         if (!plugin.packetEvents().available()) {
             return;

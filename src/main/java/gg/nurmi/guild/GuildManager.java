@@ -1,6 +1,6 @@
 package gg.nurmi.guild;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,12 +25,12 @@ public final class GuildManager {
         SUCCESS, NAME_TAKEN, TAG_TAKEN, INVALID_NAME, INVALID_TAG
     }
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final Database database;
     private final Map<UUID, Integer> pendingInvites = new ConcurrentHashMap<>();
     private final Map<UUID, Guild> guildCache = new ConcurrentHashMap<>();
 
-    public GuildManager(CanvasSuitePlugin plugin) {
+    public GuildManager(OneSMPPlugin plugin) {
         this.plugin = plugin;
         this.database = plugin.database();
     }

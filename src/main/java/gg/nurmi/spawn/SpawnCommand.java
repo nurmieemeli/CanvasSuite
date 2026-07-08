@@ -1,6 +1,6 @@
 package gg.nurmi.spawn;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.teleport.TeleportExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,11 +10,11 @@ import org.jspecify.annotations.NonNull;
 
 public final class SpawnCommand implements CommandExecutor {
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final SpawnWorldManager spawnWorldManager;
     private final TeleportExecutor teleportExecutor;
 
-    public SpawnCommand(CanvasSuitePlugin plugin, SpawnWorldManager spawnWorldManager, TeleportExecutor teleportExecutor) {
+    public SpawnCommand(OneSMPPlugin plugin, SpawnWorldManager spawnWorldManager, TeleportExecutor teleportExecutor) {
         this.plugin = plugin;
         this.spawnWorldManager = spawnWorldManager;
         this.teleportExecutor = teleportExecutor;
@@ -26,7 +26,7 @@ public final class SpawnCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.player-only");
             return true;
         }
-        if (!player.hasPermission("canvassuite.spawn.use")) {
+        if (!player.hasPermission("onesmp.spawn.use")) {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }

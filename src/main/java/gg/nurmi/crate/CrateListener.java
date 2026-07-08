@@ -1,7 +1,8 @@
 package gg.nurmi.crate;
 
-import gg.nurmi.CanvasSuitePlugin;
+import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.crate.gui.CrateOpeningGui;
+import gg.nurmi.crate.gui.CratePreviewGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -21,17 +22,18 @@ public final class CrateListener implements Listener {
     private static final double KNOCKBACK_STRENGTH = 0.6;
     private static final double KNOCKBACK_UPWARD = 0.3;
 
-    private final CanvasSuitePlugin plugin;
+    private final OneSMPPlugin plugin;
     private final CrateManager crateManager;
 
-    public CrateListener(CanvasSuitePlugin plugin, CrateManager crateManager) {
+    public CrateListener(OneSMPPlugin plugin, CrateManager crateManager) {
         this.plugin = plugin;
         this.crateManager = crateManager;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND) {
+        Action action = event.getAction();
+        if ((action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) || event.getHand() != EquipmentSlot.HAND) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -45,7 +47,7 @@ public final class CrateListener implements Listener {
         event.setCancelled(true);
 
         Player player = event.getPlayer();
-        if (!player.hasPermission("canvassuite.crate.use")) {
+        if (!player.hasPermission("onesmp.crate.use")) {
             plugin.messages().send(player, "general.no-permission");
             return;
         }
@@ -53,6 +55,11 @@ public final class CrateListener implements Listener {
         CrateType type = crateManager.type(typeKey);
         if (type == null || type.rewards().isEmpty()) {
             plugin.messages().send(player, "crate.not-a-crate");
+            return;
+        }
+
+        if (action == Action.LEFT_CLICK_BLOCK) {
+            new CratePreviewGui(plugin, type).open(player);
             return;
         }
 
