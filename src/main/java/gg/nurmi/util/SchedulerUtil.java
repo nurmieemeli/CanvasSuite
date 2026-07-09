@@ -50,6 +50,10 @@ public final class SchedulerUtil {
         return entity.getScheduler().runDelayed(plugin, ignored -> task.run(), ifRetired, Math.max(1, delayTicks)) != null;
     }
 
+    public ScheduledTask runAtEntityRepeating(Entity entity, Runnable task, Runnable ifRetired, long delayTicks, long periodTicks) {
+        return entity.getScheduler().runAtFixedRate(plugin, ignored -> task.run(), ifRetired, Math.max(1, delayTicks), periodTicks);
+    }
+
     public void runAsync(Runnable task) {
         Bukkit.getAsyncScheduler().runNow(plugin, ignored -> task.run());
     }

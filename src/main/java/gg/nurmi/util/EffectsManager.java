@@ -43,6 +43,13 @@ public final class EffectsManager {
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.3f);
     }
 
+    public void teleportWarmupTick(Player player) {
+        if (!enabled("teleport")) {
+            return;
+        }
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 0.6f, 1.4f);
+    }
+
     public void teleport(Location location) {
         if (!enabled("teleport")) {
             return;

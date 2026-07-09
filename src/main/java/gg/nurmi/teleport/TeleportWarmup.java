@@ -1,6 +1,7 @@
 package gg.nurmi.teleport;
 
 import gg.nurmi.OneSMPPlugin;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,17 +39,25 @@ public final class TeleportWarmup {
         boolean cancelOnMove = plugin.getConfig().getBoolean("teleport.cancel-warmup-on-move", true);
         plugin.messages().send(player, "teleport.teleporting", Placeholder.unparsed("seconds", String.valueOf(warmupSeconds)));
 
+        ScheduledTask tick = plugin.scheduler().runAtEntityRepeating(player,
+                () -> plugin.effects().teleportWarmupTick(player), () -> {}, 20L, 20L);
+
         boolean scheduled = plugin.scheduler().runAtEntityDelayed(player, () -> {
             pending.remove(uuid);
+            tick.cancel();
             if (cancelOnMove && hasMoved(start, player.getLocation())) {
                 plugin.messages().send(player, "teleport.teleport-cancelled-move");
                 return;
             }
             onComplete.run();
-        }, () -> pending.remove(uuid), warmupSeconds * 20L);
+        }, () -> {
+            pending.remove(uuid);
+            tick.cancel();
+        }, warmupSeconds * 20L);
 
         if (!scheduled) {
             pending.remove(uuid);
+            tick.cancel();
         }
     }
 

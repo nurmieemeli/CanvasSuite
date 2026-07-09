@@ -4,13 +4,17 @@ import org.bukkit.GameMode;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class VoidWorldListener implements Listener {
@@ -25,6 +29,8 @@ public final class VoidWorldListener implements Listener {
         return spawnWorldManager.isVoidWorld(player.getWorld()) && player.getGameMode() != GameMode.CREATIVE;
     }
 
+    // Only denies the block's own right-click behavior (opening/toggling it) - the held item's own action
+    // (throwing a bottle, eating, drinking, etc.) is left alone since it doesn't change the block itself.
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
@@ -35,12 +41,33 @@ public final class VoidWorldListener implements Listener {
             return;
         }
         if (!Tag.DOORS.isTagged(block.getType())) {
-            event.setCancelled(true);
+            event.setUseInteractedBlock(Event.Result.DENY);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (restricted(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (restricted(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (restricted(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBucketFill(PlayerBucketFillEvent event) {
         if (restricted(event.getPlayer())) {
             event.setCancelled(true);
         }
