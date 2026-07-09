@@ -1,27 +1,36 @@
 package gg.nurmi.spawn;
 
-import org.bukkit.block.Bed;
-import org.bukkit.block.data.type.RespawnAnchor;
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import gg.nurmi.OneSMPPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
+
+import java.util.UUID;
 
 public final class PlayerRespawnListener implements Listener {
 
+    private final OneSMPPlugin plugin;
     private final SpawnWorldManager spawnWorldManager;
 
-    public PlayerRespawnListener(SpawnWorldManager spawnWorldManager) {
+    public PlayerRespawnListener(OneSMPPlugin plugin, SpawnWorldManager spawnWorldManager) {
+        this.plugin = plugin;
         this.spawnWorldManager = spawnWorldManager;
     }
 
+    // Fires after the player is already placed at their respawn location.
     @EventHandler
-    public void onRespawn(PlayerDeathEvent event) {
-        Player player = event.getPlayer();
-        if (player.getBedLocation().getBlock() instanceof Bed
-                || player.getBedLocation().getBlock() instanceof RespawnAnchor) {
+    public void onRespawn(PlayerPostRespawnEvent event) {
+        if (event.isBedSpawn() || event.isAnchorSpawn()) {
             return;
         }
-        player.setRespawnLocation(spawnWorldManager.getSpawn());
+        UUID uuid = event.getPlayer().getUniqueId();
+        plugin.scheduler().runGlobalDelayed(() -> {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                spawnWorldManager.teleportToSpawn(player);
+            }
+        }, 2L);
     }
 }

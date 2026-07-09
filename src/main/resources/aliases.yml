@@ -1,7 +1,7 @@
 # Extra aliases layered on a command's own name; applied once at enable via Bukkit's command map, so changes need a restart.
 # A name already taken by another plugin is skipped (see the startup log).
 aliases:
-  onesmp: [cs]
+  onesmp: [os]
   balance: [bal, money]
   pay: []
   baltop: [bt]

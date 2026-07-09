@@ -91,6 +91,12 @@ protection:
   disable-stronghold-generation: true
   disable-nether-portal-creation: true
 
+# Backed by the server's real whitelist (whitelist.json) - /maintenance on/off flips server.getWhitelist()
+# directly, so turning maintenance off also turns the real whitelist off.
+maintenance:
+  # Kept in sync with /maintenance on/off; editing this directly takes effect on the next /onesmp reload.
+  enabled: false
+
 spawn:
   # The void world OneSMP creates automatically on first enable.
   world-name: "spawnworld"

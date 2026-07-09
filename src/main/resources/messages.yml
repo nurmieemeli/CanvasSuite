@@ -126,7 +126,17 @@ nametag:
 moderation:
   spectate-started: "<prefix><green>Now spectating <white><target></white>."
   spectate-stopped: "<prefix><green>Stopped spectating."
+  spectate-self: "<prefix><red>You can't spectate yourself."
   packetevents-required: "<prefix><red>This feature requires the PacketEvents plugin to be installed on the server."
+
+maintenance:
+  kick-message: "<prefix><red>The server is currently undergoing maintenance.<newline>Please check back later."
+  enabled: "<prefix><green>Maintenance mode enabled. Only whitelisted players and staff can join."
+  disabled: "<prefix><green>Maintenance mode disabled."
+  already-enabled: "<prefix><red>Maintenance mode is already enabled."
+  already-disabled: "<prefix><red>Maintenance mode is already disabled."
+  status-enabled: "<prefix><gray>Maintenance mode is currently <green>enabled</green>."
+  status-disabled: "<prefix><gray>Maintenance mode is currently <red>disabled</red>."
 
 tablist:
   header: "<newline><gradient:#38bdf8:#818cf8><bold>OneSMP</bold></gradient><newline>"

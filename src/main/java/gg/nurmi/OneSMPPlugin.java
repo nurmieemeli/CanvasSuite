@@ -23,6 +23,9 @@ import gg.nurmi.guild.GuildCommand;
 import gg.nurmi.guild.GuildManager;
 import gg.nurmi.guild.GuildPlaceholderExpansion;
 import gg.nurmi.gui.GuiListener;
+import gg.nurmi.maintenance.MaintenanceCommand;
+import gg.nurmi.maintenance.MaintenanceListener;
+import gg.nurmi.maintenance.MaintenanceManager;
 import gg.nurmi.stats.hologram.LeaderboardHologramCommand;
 import gg.nurmi.stats.hologram.LeaderboardHologramManager;
 import gg.nurmi.message.MessageService;
@@ -109,6 +112,7 @@ public final class OneSMPPlugin extends JavaPlugin {
     private WorldManager worldManager;
     private StatsManager statsManager;
     private Expansion statsPlaceholderExpansion;
+    private MaintenanceManager maintenanceManager;
 
     @Override
     public void onEnable() {
@@ -143,6 +147,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         registerMessaging();
         registerNametags();
         registerModeration();
+        registerMaintenance();
         registerTablist();
         registerScoreboard();
         registerStats();
@@ -153,7 +158,8 @@ public final class OneSMPPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("onesmp")).setExecutor(new OneSMPCommand(this));
     }
 
-    // aliases.yml is intentionally excluded - its command aliases are registered into Bukkit's command map once at enable and can't be cleanly re-registered at runtime.
+    // aliases.yml is intentionally excluded - its command aliases are registered into Bukkit's
+    // command map once at enable and can't be cleanly re-registered at runtime.
     public void reloadAll() {
         ConfigMigrator.migrate(this, "config.yml", Set.of("rtp.worlds"));
         reloadConfig();
@@ -161,6 +167,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         shopManager.load();
         crateManager.reload();
         subcommandAliases.load();
+        maintenanceManager.sync();
     }
 
     private void registerStats() {
@@ -218,6 +225,14 @@ public final class OneSMPPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("spectate")).setExecutor(new SpectateCommand(this, spectateManager));
     }
 
+    private void registerMaintenance() {
+        this.maintenanceManager = new MaintenanceManager(this);
+        MaintenanceCommand maintenanceCommand = new MaintenanceCommand(this, maintenanceManager);
+        Objects.requireNonNull(getCommand("maintenance")).setExecutor(maintenanceCommand);
+        Objects.requireNonNull(getCommand("maintenance")).setTabCompleter(maintenanceCommand);
+        getServer().getPluginManager().registerEvents(new MaintenanceListener(this, maintenanceManager), this);
+    }
+
     private void registerWorlds() {
         this.worldManager = new WorldManager(this);
         worldManager.loadWorlds();
@@ -262,7 +277,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FirstJoinListener(this, spawnWorldManager), this);
         getServer().getPluginManager().registerEvents(new VoidWorldListener(spawnWorldManager), this);
         getServer().getPluginManager().registerEvents(new VoidFallRescueListener(spawnWorldManager), this);
-        getServer().getPluginManager().registerEvents(new PlayerRespawnListener(spawnWorldManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerRespawnListener(this, spawnWorldManager), this);
     }
 
     private void registerProtection() {
@@ -320,7 +335,9 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     private void registerCrates() {
         this.crateManager = new CrateManager(this);
-        Objects.requireNonNull(getCommand("crate")).setExecutor(new CrateCommand(this, crateManager));
+        CrateCommand crateCommand = new CrateCommand(this, crateManager);
+        Objects.requireNonNull(getCommand("crate")).setExecutor(crateCommand);
+        Objects.requireNonNull(getCommand("crate")).setTabCompleter(crateCommand);
         getServer().getPluginManager().registerEvents(new CrateListener(this, crateManager), this);
     }
 
@@ -423,5 +440,9 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     public StatsManager stats() {
         return statsManager;
+    }
+
+    public MaintenanceManager maintenance() {
+        return maintenanceManager;
     }
 }

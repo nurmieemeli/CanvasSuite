@@ -34,3 +34,7 @@ crate:
   key: []
 onesmp:
   reload: []
+maintenance:
+  on: [enable]
+  off: [disable]
+  status: [info]

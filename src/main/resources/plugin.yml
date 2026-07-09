@@ -78,6 +78,9 @@ commands:
   spectate:
     description: Toggle moderator spectate/vanish mode on a target player.
     usage: /spectate [player]
+  maintenance:
+    description: Toggle maintenance mode, backed by the server's whitelist.
+    usage: /maintenance <on|off|status>
   world:
     description: Create and manage worlds.
     usage: /world <create|list|delete|teleport> ...
@@ -116,6 +119,7 @@ permissions:
       onesmp.world.admin: true
       onesmp.msg.socialspy: true
       onesmp.crate.admin: true
+      onesmp.maintenance.admin: true
   onesmp.economy.use: { default: true }
   onesmp.economy.admin: { default: op }
   onesmp.shop.use: { default: true }
@@ -135,6 +139,8 @@ permissions:
   onesmp.spawn.use: { default: true }
   onesmp.spawn.admin: { default: op }
   onesmp.moderation.spectate: { default: op }
+  onesmp.maintenance.admin: { default: op }
+  onesmp.maintenance.bypass: { default: op }
   onesmp.world.admin: { default: op }
   onesmp.msg.use: { default: true }
   onesmp.msg.socialspy: { default: op }

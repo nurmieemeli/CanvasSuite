@@ -51,6 +51,10 @@ public final class SpectateCommand implements CommandExecutor {
             plugin.messages().send(player, "general.player-not-found", Placeholder.unparsed("target", args[0]));
             return true;
         }
+        if (target.equals(player)) {
+            plugin.messages().send(player, "moderation.spectate-self");
+            return true;
+        }
 
         plugin.scheduler().runAtEntity(target, () -> {
             Location targetLocation = target.getLocation();
