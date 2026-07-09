@@ -4,7 +4,6 @@ import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.world.gui.WorldCreationGui;
 import gg.nurmi.world.gui.WorldListGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -107,7 +106,7 @@ public final class WorldCommand implements CommandExecutor, TabCompleter {
             return;
         }
         String name = args[1];
-        World world = Bukkit.getWorld(name);
+        World world = worldManager.getWorld(name);
         if (world == null || worldManager.getSettings(name) == null) {
             plugin.messages().send(player, "world.not-found", Placeholder.unparsed("name", name));
             return;

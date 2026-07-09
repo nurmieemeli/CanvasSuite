@@ -6,7 +6,6 @@ import gg.nurmi.util.ItemBuilder;
 import gg.nurmi.world.WorldManager;
 import gg.nurmi.world.WorldSettings;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -39,7 +38,7 @@ public final class WorldDetailGui extends AbstractGui {
                 .name(plugin.messages().parse("<white>Teleport Here"))
                 .build(), event -> {
             if (event.getWhoClicked() instanceof Player player) {
-                World world = Bukkit.getWorld(worldName);
+                World world = worldManager.getWorld(worldName);
                 if (world != null) {
                     player.closeInventory();
                     plugin.teleportExecutor().executeSafely(player, world.getSpawnLocation());

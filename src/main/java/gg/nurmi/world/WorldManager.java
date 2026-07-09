@@ -63,7 +63,7 @@ public final class WorldManager {
 
     public void deleteWorld(String name, boolean wipeFiles, Consumer<Boolean> onDone) {
         plugin.scheduler().runGlobal(() -> {
-            World world = Bukkit.getWorld(name);
+            World world = Bukkit.getWorld(storageName(name));
             if (world == null) {
                 managed.remove(name);
                 save();
@@ -89,9 +89,10 @@ public final class WorldManager {
     }
 
     private World ensureBukkitWorldLoaded(WorldSettings settings) {
-        World world = Bukkit.getWorld(settings.name());
+        String storageName = storageName(settings.name());
+        World world = Bukkit.getWorld(storageName);
         if (world == null) {
-            WorldCreator creator = new WorldCreator(settings.name())
+            WorldCreator creator = new WorldCreator(storageName)
                     .environment(settings.environment())
                     .type(settings.type())
                     .seed(settings.seed())
@@ -137,7 +138,15 @@ public final class WorldManager {
     }
 
     public boolean worldNameTaken(String name) {
-        return managed.containsKey(name) || Bukkit.getWorld(name) != null;
+        return managed.containsKey(name) || Bukkit.getWorld(storageName(name)) != null;
+    }
+
+    public World getWorld(String name) {
+        return Bukkit.getWorld(storageName(name));
+    }
+
+    private String storageName(String name) {
+        return WorldPaths.resolve(plugin.getConfig().getString("world-creation.container", ""), name);
     }
 
     public boolean isValidName(String name) {

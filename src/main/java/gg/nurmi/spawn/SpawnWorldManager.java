@@ -2,6 +2,7 @@ package gg.nurmi.spawn;
 
 import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.world.VoidChunkGenerator;
+import gg.nurmi.world.WorldPaths;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public final class SpawnWorldManager {
@@ -21,21 +21,25 @@ public final class SpawnWorldManager {
     }
 
     public void ensureWorldExists() {
-        String worldName = voidWorldName();
+        String worldName = voidWorldStorageName();
         if (Bukkit.getWorld(worldName) != null) {
             return;
         }
 
-        // If it already exists on disk it's just unloaded (e.g. a restart) - skip re-building the starter platform.
-        boolean existsOnDisk = new File(Bukkit.getWorldContainer(), worldName).isDirectory();
+        // Tracked ourselves rather than inferred from the world folder's on-disk presence - the world
+        // being unloaded at this point (e.g. a restart) doesn't mean it's new, and guessing at Bukkit's
+        // world-folder path via getWorldContainer() isn't reliable enough to gate a one-time build on.
+        boolean platformAlreadyBuilt = plugin.getConfig().getBoolean("spawn.platform-built", false);
 
         plugin.scheduler().runGlobal(() -> {
             World world = new WorldCreator(worldName)
                     .generator(new VoidChunkGenerator())
                     .environment(World.Environment.NORMAL)
                     .createWorld();
-            if (world != null && !existsOnDisk) {
+            if (world != null && !platformAlreadyBuilt) {
                 buildStarterPlatform(world);
+                plugin.getConfig().set("spawn.platform-built", true);
+                plugin.saveConfig();
             }
         });
     }
@@ -53,10 +57,10 @@ public final class SpawnWorldManager {
     }
 
     public Location getSpawn() {
-        String worldName = plugin.getConfig().getString("spawn.world", voidWorldName());
+        String worldName = plugin.getConfig().getString("spawn.world", voidWorldStorageName());
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            world = Bukkit.getWorld(voidWorldName());
+            world = Bukkit.getWorld(voidWorldStorageName());
         }
         if (world == null) {
             world = Bukkit.getWorlds().getFirst();
@@ -86,10 +90,14 @@ public final class SpawnWorldManager {
     }
 
     public boolean isVoidWorld(World world) {
-        return world != null && world.getName().equals(voidWorldName());
+        return world != null && world.getName().equals(voidWorldStorageName());
     }
 
     private String voidWorldName() {
         return plugin.getConfig().getString("spawn.world-name", "onesmp_spawn");
+    }
+
+    private String voidWorldStorageName() {
+        return WorldPaths.resolve(plugin.getConfig().getString("world-creation.container", ""), voidWorldName());
     }
 }

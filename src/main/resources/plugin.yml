@@ -100,8 +100,8 @@ commands:
     description: View your or another player's kill/death/killstreak/playtime stats.
     usage: /stats [player]
   statstop:
-    description: View the leaderboard for kills, deaths, killstreak, or playtime.
-    usage: /statstop <kills|deaths|killstreak|playtime>
+    description: View the leaderboard for kills, deaths, killstreak, playtime, or K/D.
+    usage: /statstop <kills|deaths|killstreak|playtime|kd>
   statshologram:
     description: Create, remove, or list leaderboard holograms (requires FancyHolograms).
     usage: /statshologram <create|remove|list> ...

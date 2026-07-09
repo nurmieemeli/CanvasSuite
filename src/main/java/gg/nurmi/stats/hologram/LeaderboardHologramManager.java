@@ -8,6 +8,7 @@ import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.stats.StatsManager;
 import gg.nurmi.util.Database;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -69,6 +70,8 @@ public final class LeaderboardHologramManager {
 
         TextHologramData data = new TextHologramData(fancyName, location);
         data.setText(new ArrayList<>(List.of("<gray>Loading...")));
+        data.setBackground(Hologram.TRANSPARENT);
+        data.setBillboard(Display.Billboard.VERTICAL);
         Hologram hologram = manager.create(data);
         manager.addHologram(hologram);
 

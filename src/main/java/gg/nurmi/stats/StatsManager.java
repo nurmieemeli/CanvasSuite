@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,7 +27,9 @@ public final class StatsManager {
         KILLS("kills"),
         DEATHS("deaths"),
         KILLSTREAK("best_killstreak"),
-        PLAYTIME("playtime_seconds");
+        PLAYTIME("playtime_seconds"),
+        // Computed in Java rather than queried directly - see StatsManager#topKd.
+        KD("kd_ratio");
 
         private final String column;
 
@@ -48,15 +51,18 @@ public final class StatsManager {
                 case DEATHS -> "<gradient:#f87171:#ef4444><bold>Deaths Leaderboard</bold></gradient>";
                 case KILLSTREAK -> "<gradient:#fb923c:#f97316><bold>Killstreak Leaderboard</bold></gradient>";
                 case PLAYTIME -> "<gradient:#38bdf8:#818cf8><bold>Playtime Leaderboard</bold></gradient>";
+                case KD -> "<gradient:#a78bfa:#818cf8><bold>K/D Leaderboard</bold></gradient>";
             };
         }
 
+        // KD values arrive scaled by 100 (see StatsManager#topKd) so they can travel through TopEntry's long value.
         public String formatValue(long value) {
             return switch (this) {
                 case PLAYTIME -> TextUtil.formatDuration(value);
                 case KILLS -> value + " kills";
                 case DEATHS -> value + " deaths";
                 case KILLSTREAK -> "best streak: " + value;
+                case KD -> String.format(Locale.ROOT, "%.2f K/D", value / 100.0);
             };
         }
     }
@@ -280,6 +286,9 @@ public final class StatsManager {
     }
 
     public CompletableFuture<List<TopEntry>> top(StatType type, int limit) {
+        if (type == StatType.KD) {
+            return topKd(limit);
+        }
         return plugin.scheduler().supplyAsync(() -> {
             List<TopEntry> entries = new ArrayList<>();
             String sql = "SELECT uuid, name, " + type.column + " AS value FROM player_stats WHERE name IS NOT NULL ORDER BY "
@@ -298,5 +307,36 @@ public final class StatsManager {
             }
             return entries;
         });
+    }
+
+    private record KillsDeaths(UUID uuid, String name, int kills, int deaths) {
+    }
+
+    // Ratio isn't a stored column, so this pulls every kill-having player's raw counts and sorts in Java
+    // rather than trying to express the ratio portably across SQLite and MySQL.
+    private CompletableFuture<List<TopEntry>> topKd(int limit) {
+        return plugin.scheduler().supplyAsync(() -> {
+            List<KillsDeaths> rows = new ArrayList<>();
+            String sql = "SELECT uuid, name, kills, deaths FROM player_stats WHERE name IS NOT NULL AND kills > 0";
+            try (Connection connection = database.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql);
+                 ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    rows.add(new KillsDeaths(UUID.fromString(resultSet.getString("uuid")), resultSet.getString("name"),
+                            resultSet.getInt("kills"), resultSet.getInt("deaths")));
+                }
+            } catch (SQLException ex) {
+                plugin.getLogger().log(Level.WARNING, "Failed to load kd leaderboard", ex);
+            }
+            return rows.stream()
+                    .sorted(Comparator.comparingDouble((KillsDeaths row) -> kdRatio(row.kills(), row.deaths())).reversed())
+                    .limit(limit)
+                    .map(row -> new TopEntry(row.uuid(), row.name(), Math.round(kdRatio(row.kills(), row.deaths()) * 100)))
+                    .toList();
+        });
+    }
+
+    private static double kdRatio(int kills, int deaths) {
+        return deaths == 0 ? kills : (double) kills / deaths;
     }
 }

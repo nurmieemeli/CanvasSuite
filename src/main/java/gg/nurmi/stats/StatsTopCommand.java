@@ -34,7 +34,7 @@ public final class StatsTopCommand implements CommandExecutor {
         StatsManager.StatType type = StatsManager.StatType.fromKey(typeArg).orElse(null);
         if (type == null) {
             plugin.messages().send(sender, "general.unknown-command",
-                    Placeholder.unparsed("usage", "/statstop <kills|deaths|killstreak|playtime>"));
+                    Placeholder.unparsed("usage", "/statstop <kills|deaths|killstreak|playtime|kd>"));
             return true;
         }
 

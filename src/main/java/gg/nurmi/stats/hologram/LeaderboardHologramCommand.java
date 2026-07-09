@@ -16,7 +16,7 @@ import java.util.Locale;
 public final class LeaderboardHologramCommand implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBCOMMANDS = List.of("create", "remove", "list");
-    private static final List<String> STAT_TYPES = List.of("kills", "deaths", "killstreak", "playtime");
+    private static final List<String> STAT_TYPES = List.of("kills", "deaths", "killstreak", "playtime", "kd");
 
     private final OneSMPPlugin plugin;
     private final LeaderboardHologramManager hologramManager;
@@ -59,14 +59,14 @@ public final class LeaderboardHologramCommand implements CommandExecutor, TabCom
     private void handleCreate(Player player, String[] args) {
         if (args.length < 3) {
             plugin.messages().send(player, "general.unknown-command",
-                    Placeholder.unparsed("usage", "/statshologram create <kills|deaths|killstreak|playtime> <name> [limit]"));
+                    Placeholder.unparsed("usage", "/statshologram create <kills|deaths|killstreak|playtime|kd> <name> [limit]"));
             return;
         }
 
         StatsManager.StatType type = StatsManager.StatType.fromKey(args[1]).orElse(null);
         if (type == null) {
             plugin.messages().send(player, "general.unknown-command",
-                    Placeholder.unparsed("usage", "/statshologram create <kills|deaths|killstreak|playtime> <name> [limit]"));
+                    Placeholder.unparsed("usage", "/statshologram create <kills|deaths|killstreak|playtime|kd> <name> [limit]"));
             return;
         }
 

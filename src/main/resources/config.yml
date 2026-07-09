@@ -107,6 +107,9 @@ spawn:
   z: 0.5
   yaw: 0.0
   pitch: 0.0
+  # Internal - set automatically once the starter platform is built, so it's never rebuilt on a later
+  # restart. Don't hand-edit this unless you want the platform re-created.
+  platform-built: false
 
 # Overhead nametag prefixes via PacketEvents team packets only - no real scoreboard team is ever registered. Requires PacketEvents, silently disabled otherwise.
 nametag:
@@ -143,6 +146,11 @@ join-leave:
   leave-enabled: true
 
 world-creation:
+  # Every world OneSMP creates (the spawn void world and /world create) is nested under this path,
+  # relative to the server's own world container - e.g. "world/dimensions/minecraft". Leave blank to
+  # create worlds directly in the server's default location. Changing this after worlds already exist
+  # won't move them - it only affects newly-created worlds.
+  container: ""
   # Seeded into a fresh /world create session before the admin starts toggling anything in the GUI.
   defaults:
     environment: NORMAL

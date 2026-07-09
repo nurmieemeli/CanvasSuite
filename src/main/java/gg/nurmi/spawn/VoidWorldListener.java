@@ -62,7 +62,8 @@ public final class VoidWorldListener implements Listener {
 
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        if (event.getEntity() instanceof Player player && restricted(player)) {
+        if (event.getEntity() instanceof Player player && restricted(player)
+                && event.getFoodLevel() < player.getFoodLevel()) {
             event.setCancelled(true);
         }
     }
