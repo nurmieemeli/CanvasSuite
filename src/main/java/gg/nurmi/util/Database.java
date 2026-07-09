@@ -187,6 +187,18 @@ public final class Database {
                     PRIMARY KEY (world, x, y, z)
                 )
                 """);
+
+            statement.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS market_listings (
+                    id %s,
+                    seller_uuid VARCHAR(36) NOT NULL,
+                    seller_name VARCHAR(16),
+                    material VARCHAR(64) NOT NULL,
+                    item_data BLOB NOT NULL,
+                    price DECIMAL(20,2) NOT NULL,
+                    created_at BIGINT NOT NULL
+                )
+                """.formatted(idType));
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to run OneSMP schema migration", ex);
         }

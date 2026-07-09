@@ -11,7 +11,7 @@ import gg.nurmi.economy.EconomyManager;
 import gg.nurmi.economy.EconomyPlaceholderExpansion;
 import gg.nurmi.economy.PayCommand;
 import gg.nurmi.economy.VaultEconomyProvider;
-import gg.nurmi.effects.EffectsManager;
+import gg.nurmi.util.EffectsManager;
 import gg.nurmi.message.ChatFormatListener;
 import gg.nurmi.message.JoinLeaveMessageListener;
 import gg.nurmi.util.AliasManager;
@@ -23,9 +23,13 @@ import gg.nurmi.guild.GuildCommand;
 import gg.nurmi.guild.GuildManager;
 import gg.nurmi.guild.GuildPlaceholderExpansion;
 import gg.nurmi.gui.GuiListener;
+import gg.nurmi.help.HelpCommand;
+import gg.nurmi.help.HelpManager;
 import gg.nurmi.maintenance.MaintenanceCommand;
 import gg.nurmi.maintenance.MaintenanceListener;
 import gg.nurmi.maintenance.MaintenanceManager;
+import gg.nurmi.market.MarketCommand;
+import gg.nurmi.market.MarketManager;
 import gg.nurmi.stats.hologram.LeaderboardHologramCommand;
 import gg.nurmi.stats.hologram.LeaderboardHologramManager;
 import gg.nurmi.message.MessageService;
@@ -42,14 +46,11 @@ import gg.nurmi.moderation.SpectateManager;
 import gg.nurmi.nametag.NametagListener;
 import gg.nurmi.nametag.NametagManager;
 import gg.nurmi.util.PacketEventsBootstrap;
-import gg.nurmi.world.protection.PortalListener;
-import gg.nurmi.world.protection.StrongholdDatapackInstaller;
 import gg.nurmi.teleport.rtp.RtpCommand;
 import gg.nurmi.scoreboard.ScoreboardListener;
 import gg.nurmi.scoreboard.ScoreboardManager;
 import gg.nurmi.teleport.rtp.RtpManager;
 import gg.nurmi.util.SchedulerUtil;
-import gg.nurmi.shop.BuyCommand;
 import gg.nurmi.shop.SellCommand;
 import gg.nurmi.shop.ShopManager;
 import gg.nurmi.spawn.FirstJoinListener;
@@ -113,6 +114,8 @@ public final class OneSMPPlugin extends JavaPlugin {
     private StatsManager statsManager;
     private Expansion statsPlaceholderExpansion;
     private MaintenanceManager maintenanceManager;
+    private MarketManager marketManager;
+    private HelpManager helpManager;
 
     @Override
     public void onEnable() {
@@ -135,13 +138,13 @@ public final class OneSMPPlugin extends JavaPlugin {
 
         registerEconomy();
         registerShop();
+        registerMarket();
         registerCrates();
         registerTeleport();
         registerRtp();
         registerGuild();
         getServer().getPluginManager().registerEvents(new ChatFormatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinLeaveMessageListener(this), this);
-        registerProtection();
         registerSpawn();
         registerWorlds();
         registerMessaging();
@@ -152,6 +155,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         registerScoreboard();
         registerStats();
         registerHolograms();
+        registerHelp();
 
         new AliasManager(this).applyAliases();
 
@@ -168,6 +172,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         crateManager.reload();
         subcommandAliases.load();
         maintenanceManager.sync();
+        helpManager.load();
     }
 
     private void registerStats() {
@@ -280,11 +285,6 @@ public final class OneSMPPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerRespawnListener(this, spawnWorldManager), this);
     }
 
-    private void registerProtection() {
-        new StrongholdDatapackInstaller(this).installForAllWorlds();
-        getServer().getPluginManager().registerEvents(new PortalListener(this), this);
-    }
-
     private void registerRtp() {
         RtpManager rtpManager = new RtpManager(this);
         Objects.requireNonNull(getCommand("rtp")).setExecutor(new RtpCommand(this, rtpManager));
@@ -329,8 +329,21 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     private void registerShop() {
         this.shopManager = new ShopManager(this);
-        Objects.requireNonNull(getCommand("buy")).setExecutor(new BuyCommand(this));
         Objects.requireNonNull(getCommand("sell")).setExecutor(new SellCommand(this));
+    }
+
+    private void registerMarket() {
+        this.marketManager = new MarketManager(this);
+        MarketCommand marketCommand = new MarketCommand(this, marketManager);
+        Objects.requireNonNull(getCommand("market")).setExecutor(marketCommand);
+        Objects.requireNonNull(getCommand("market")).setTabCompleter(marketCommand);
+    }
+
+    private void registerHelp() {
+        this.helpManager = new HelpManager(this);
+        HelpCommand helpCommand = new HelpCommand(this, helpManager);
+        Objects.requireNonNull(getCommand("help")).setExecutor(helpCommand);
+        Objects.requireNonNull(getCommand("help")).setTabCompleter(helpCommand);
     }
 
     private void registerCrates() {
@@ -408,6 +421,14 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     public ShopManager shop() {
         return shopManager;
+    }
+
+    public MarketManager market() {
+        return marketManager;
+    }
+
+    public HelpManager help() {
+        return helpManager;
     }
 
     public CrateManager crates() {

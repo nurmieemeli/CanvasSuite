@@ -78,7 +78,7 @@ public final class SellGui extends AbstractGui {
                 continue;
             }
             ShopItem shopItem = plugin.shop().findItem(stack.getType());
-            if (shopItem == null || !shopItem.sellable()) {
+            if (shopItem == null) {
                 continue;
             }
             double effectiveSell = shopItem.sellPrice() * plugin.shop().sellPriceMultiplier();
@@ -132,7 +132,7 @@ public final class SellGui extends AbstractGui {
                 continue;
             }
             ShopItem shopItem = plugin.shop().findItem(stack.getType());
-            if (shopItem == null || !shopItem.sellable()) {
+            if (shopItem == null) {
                 continue;
             }
             double effectiveSell = shopItem.sellPrice() * plugin.shop().sellPriceMultiplier();

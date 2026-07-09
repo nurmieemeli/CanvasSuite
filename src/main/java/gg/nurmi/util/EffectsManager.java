@@ -1,4 +1,4 @@
-package gg.nurmi.effects;
+package gg.nurmi.util;
 
 import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Location;

@@ -55,12 +55,18 @@ public final class MessageService {
     }
 
     public Component render(Pointered audience, String path, TagResolver... extra) {
+        return renderRaw(audience, raw(path), extra);
+    }
+
+    // For MiniMessage templates authored outside messages.yml (e.g. another module's own config file)
+    // that still want the shared <prefix>/MiniPlaceholders resolution.
+    public Component renderRaw(Pointered audience, String template, TagResolver... extra) {
         TagResolver resolver = TagResolver.resolver(
                 prefixResolver(),
                 MiniPlaceholders.audienceGlobalPlaceholders(),
                 TagResolver.resolver(extra)
         );
-        return miniMessage.deserialize(raw(path), audience, resolver);
+        return miniMessage.deserialize(template, audience, resolver);
     }
 
     public Component renderRelational(Audience viewer, Audience other, String path, TagResolver... extra) {
@@ -80,16 +86,20 @@ public final class MessageService {
     }
 
     public void send(Audience audience, String path, TagResolver... extra) {
+        sendRaw(audience, raw(path), extra);
+    }
+
+    // For MiniMessage templates authored outside messages.yml - see renderRaw.
+    public void sendRaw(Audience audience, String template, TagResolver... extra) {
         Pointered target = audience instanceof Pointered pointered ? pointered : Audience.empty();
-        audience.sendMessage(render(target, path, extra));
+        audience.sendMessage(renderRaw(target, template, extra));
         if (audience instanceof Player player) {
-            playFeedbackSound(player, path);
+            playFeedbackSound(player, template);
         }
     }
 
-    // Relies on messages.yml's convention that every message starts with <prefix><red> (error) or <prefix><green> (success).
-    private void playFeedbackSound(Player player, String path) {
-        String template = raw(path);
+    // Relies on the convention that every message starts with <prefix><red> (error) or <prefix><green> (success).
+    private void playFeedbackSound(Player player, String template) {
         if (template.startsWith("<prefix><red>")) {
             plugin.effects().failure(player);
         } else if (template.startsWith("<prefix><green>")) {

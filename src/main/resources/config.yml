@@ -23,6 +23,10 @@ shop:
   # e.g. 0.75 = sell for 75% of list price.
   sell-price-multiplier: 1.0
 
+market:
+  # A player can't have more than this many active listings at once.
+  max-listings-per-player: 10
+
 # Cosmetic sound/particle feedback only - never affects whether an action succeeds.
 effects:
   enabled: true
@@ -86,10 +90,6 @@ chat:
   guild-chat-format: "<dark_aqua>[G]</dark_aqua> <gray>[<guild_tag>]</gray> <white><player_name></white><gray>:</gray><aqua><message>"
   # Include your own trailing space - the no-guild case omits both the brackets and the space.
   guild-segment-format: "<gray>[<guild_tag>]</gray> "
-
-protection:
-  disable-stronghold-generation: true
-  disable-nether-portal-creation: true
 
 # Backed by the server's real whitelist (whitelist.json) - /maintenance on/off flips server.getWhitelist()
 # directly, so turning maintenance off also turns the real whitelist off.

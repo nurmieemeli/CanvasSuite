@@ -141,8 +141,12 @@ public final class WorldManager {
         return managed.containsKey(name) || Bukkit.getWorld(storageName(name)) != null;
     }
 
+    // Tries the name as-is first (vanilla worlds like "world"/"world_nether" and anything else that isn't
+    // nested under world-creation.container), then falls back to the container-qualified name for worlds
+    // OneSMP created itself.
     public World getWorld(String name) {
-        return Bukkit.getWorld(storageName(name));
+        World direct = Bukkit.getWorld(name);
+        return direct != null ? direct : Bukkit.getWorld(storageName(name));
     }
 
     private String storageName(String name) {

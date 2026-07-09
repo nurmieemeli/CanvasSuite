@@ -53,10 +53,17 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 - Automatically registers as the server's Vault economy provider when Vault is installed, so any other Vault-aware plugin can use OneSMP's currency without extra setup.
 
 ### 🛒 Shop
-- `/buy` opens a category-browser GUI defined entirely in `shop.yml` — categories, display items, and per-item buy/sell prices.
 - `/sell` opens an empty inventory to drop items into; it shows a running sell value as you fill it and pays out on confirm.
-- A global `shop.sell-price-multiplier` in `config.yml` scales every sell price at once (e.g. `0.75` = sell for 75% of list price).
-- Overflow-safe: if your inventory fills mid-purchase, the undeliverable portion is refunded; closing `/sell` with unsold items in it drops any that don't fit back in your inventory.
+- Per-item sell prices live in `shop.yml`; a global `shop.sell-price-multiplier` in `config.yml` scales every sell price at once (e.g. `0.75` = sell for 75% of list price).
+- Overflow-safe: closing `/sell` with unsold items in it drops any that don't fit back in your inventory.
+
+### 🏪 Market
+- Player-to-player marketplace, backed by the database so listings survive restarts and sell while the seller is offline.
+- `/market sell <price>` lists the item in your hand for a set total price; `/market` opens a paginated GUI of active listings — click one to buy it instantly.
+- `/market search <query>` filters that GUI to listings whose item name matches. Run it with no query (or click the compass in the browse GUI) to search via a native Paper [dialog](https://docs.papermc.io/paper/dev/dialogs/) text prompt instead of typing the query as a command argument.
+- `/market mine` shows your own active listings; click one to cancel it and reclaim the item.
+- `market.max-listings-per-player` in `config.yml` caps how many listings a single player can have active at once.
+- Overflow-safe: if a buyer's or canceller's inventory is full, the item drops at their feet instead of being lost.
 
 ### 🎁 Crates
 - Crate types (key appearance and a weighted reward pool of items/money/console commands) are defined entirely in `crates.yml`; each reward's reel/preview icon defaults to its first item (or a generic gold/star icon for money/command-only rewards) but can be overridden with `display-item`.
@@ -142,12 +149,14 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 - `/spectate <player>` toggles a packet-driven vanish + spectator view of the target for moderators — the target never sees the moderator, and the moderator can freely fly through blocks to observe.
 - Requires PacketEvents; refuses to run at all without it, rather than offering a false sense of invisibility.
 
+### ❓ Help
+- `/help` opens a native Paper [dialog](https://docs.papermc.io/paper/dev/dialogs/) listing help categories; clicking one shows its articles, and clicking an article shows its content — all server-side, no inventory GUI or chat involved.
+- `/help <category>` and `/help <category> <article>` jump straight to a category or article without clicking through.
+- Categories and their articles (title, MiniMessage-formatted body, icon, description) are entirely defined in `help.yml`.
+
 ### ✉️ Private Messaging
 - `/msg`/`/tell`/`/w`/`/pm`, `/reply`, `/ignore`, and `/socialspy` (mirrors everyone's DMs to whoever has it enabled).
 - Configurable cooldown between messages from the same sender.
-
-### 🌍 World Protection
-- Optional toggles to block new stronghold generation and new nether portal creation, independent of each other.
 
 ### ✨ Feedback & Effects
 - Every command reply is automatically paired with a sound: messages.yml's own `<green>`/`<red>` color convention (success vs. denial/error) picks the sound, so this works for every command without per-command wiring.
@@ -160,13 +169,13 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 
 | Command | Description | Permission |
 |---|---|---|
-| `/onesmp reload` (`/cs`) | Reload `config.yml`, `messages.yml`, `shop.yml`, `crates.yml`, and `subcommand-aliases.yml` without restarting | `onesmp.admin` |
+| `/onesmp reload` (`/cs`) | Reload `config.yml`, `messages.yml`, `shop.yml`, `crates.yml`, `help.yml`, and `subcommand-aliases.yml` without restarting | `onesmp.admin` |
 | `/balance [player]` (`/bal`, `/money`) | Check a balance | `onesmp.economy.use` |
 | `/pay <player> <amount>` | Send money | `onesmp.economy.use` |
 | `/baltop` (`/bt`) | Rich-list GUI | `onesmp.economy.use` |
 | `/eco <give\|take\|set> <player> <amount>` | Admin economy control | `onesmp.economy.admin` |
-| `/buy` | Open the server shop GUI (buy) | `onesmp.shop.use` |
 | `/sell` | Open the sell GUI | `onesmp.shop.sell` |
+| `/market [sell <price>\|search <query>\|mine\|cancel <id>]` | Browse, search, list, and cancel player market listings | `onesmp.market.use` |
 | `/crate <create\|remove\|key> ...` | Bind/unbind crate blocks, give keys (admin) | `onesmp.crate.admin` |
 | `/sethome [name]` / `/home [name]` (`/homes`) / `/delhome <name>` | Manage & use homes | `onesmp.home.use` |
 | `/setwarp <name>` / `/delwarp <name>` | Manage warps | `onesmp.warp.admin` |
@@ -186,6 +195,7 @@ All player-facing text is rendered with [Adventure MiniMessage](https://docs.adv
 | `/stats [player]` | View kill/death/killstreak/playtime stats | `onesmp.stats.use` |
 | `/statstop <kills\|deaths\|killstreak\|playtime>` | Leaderboard GUI for a stat | `onesmp.stats.use` |
 | `/statshologram <create\|remove\|list> ...` | Manage leaderboard holograms (requires FancyHolograms) | `onesmp.stats.hologram.admin` |
+| `/help [category] [article]` | Browse help articles via a native dialog | `onesmp.help.use` |
 
 Every command's *own* name always works no matter what's configured — the aliases above are just the shipped defaults, and both they and each command's **subcommand** aliases (e.g. `/world tp` for `/world teleport`) are fully editable via `aliases.yml`/`subcommand-aliases.yml`. `subcommand-aliases.yml` changes are picked up by `/onesmp reload`; `aliases.yml` still needs a restart, since those aliases are registered into Bukkit's command map once at enable — see [Configuration](#-configuration).
 
@@ -198,8 +208,8 @@ Every command's *own* name always works no matter what's configured — the alia
 |---|---|---|
 | `onesmp.admin` | op | Grants every admin node below |
 | `onesmp.economy.use` / `.admin` | true / op | Economy commands / `/eco` |
-| `onesmp.shop.use` | true | Shop access (buy) |
 | `onesmp.shop.sell` | true | Sell menu access |
+| `onesmp.market.use` | true | Browse, search, list, and buy on the player market |
 | `onesmp.crate.use` | true | Open a bound crate with a matching key |
 | `onesmp.crate.admin` | op | `/crate` (create/remove/key) |
 | `onesmp.home.use` | true | Homes |
@@ -217,22 +227,24 @@ Every command's *own* name always works no matter what's configured — the alia
 | `onesmp.msg.socialspy` | op | `/socialspy` |
 | `onesmp.stats.use` | true | `/stats`, `/statstop` |
 | `onesmp.stats.hologram.admin` | op | `/statshologram` (create/remove/list) |
+| `onesmp.help.use` | true | `/help` |
 
 </details>
 
 ## ⚙️ Configuration
 
-Five files are created in `plugins/OneSMP/` on first start, plus `worlds.yml` once you first use `/world create`:
+Six files are created in `plugins/OneSMP/` on first start, plus `worlds.yml` once you first use `/world create`:
 
-- **`config.yml`** — storage backend (MySQL credentials with automatic SQLite fallback), economy settings, teleport warmup/TPA timeouts, home limits, RTP radius/cooldown/per-world enable+fee/precache, guild rules/costs/no-guild placeholder string, chat format, join/leave message toggles, protection toggles, spawn/void-world settings, nametag/tablist/scoreboard settings, private-message cooldown, killstreak broadcast milestones/playtime autosave interval, leaderboard hologram refresh interval, and cosmetic sound/particle effect toggles.
+- **`config.yml`** — storage backend (MySQL credentials with automatic SQLite fallback), economy settings, teleport warmup/TPA timeouts, home limits, RTP radius/cooldown/per-world enable+fee/precache, guild rules/costs/no-guild placeholder string, chat format, join/leave message toggles, market listing cap, spawn/void-world settings, nametag/tablist/scoreboard settings, private-message cooldown, killstreak broadcast milestones/playtime autosave interval, leaderboard hologram refresh interval, and cosmetic sound/particle effect toggles.
 - **`messages.yml`** — every message the plugin sends, in MiniMessage. Change colors, add gradients, hover/click events, or MiniPlaceholders tags freely. The shared `<prefix>` is defined once at the top.
-- **`shop.yml`** — shop categories and per-item `buy-price` / `sell-price` values.
+- **`shop.yml`** — per-item `/sell` prices. Player market listings aren't configured here — they're created in-game via `/market sell` and stored in the database.
 - **`crates.yml`** — crate types: key appearance and a weighted reward pool of items/money/console commands per type.
+- **`help.yml`** — `/help` categories and their articles (title, description, icon, MiniMessage-formatted body).
 - **`aliases.yml`** — extra aliases for every command (e.g. `/bal` for `/balance`), applied at enable by registering the same command object under each configured alias in Bukkit's command map. Edit freely; a command's own name always works regardless of what's listed here. Changes take effect on the next restart.
 - **`subcommand-aliases.yml`** — extra aliases for individual subcommands of `/world`, `/guild`, and `/eco` (e.g. `/world tp` for `/world teleport`). Unlike `aliases.yml` these aren't real Bukkit commands, just extra labels checked in code; a subcommand's own name always works regardless of what's listed here. Changes take effect on the next restart.
 - **`worlds.yml`** — one entry per world created via `/world create`, storing its generator settings so they're reapplied identically on every restart. Managed entirely by the `/world` command — hand-editing isn't necessary. Not part of the auto-migration below since it has no bundled default to compare against.
 
-On every startup, each of the five files above (everything except `worlds.yml`) is checked against the version bundled in the plugin jar, and any option that's missing on disk (typically after upgrading to a version that added one) is added with its default value — existing settings are never touched. Since re-saving a YAML file with Bukkit's config API drops hand-written comments, this only re-saves a file when something was actually missing, and always leaves a `<file>.bak` copy of the pre-update version alongside it first.
+On every startup, each of the six files above (everything except `worlds.yml`) is checked against the version bundled in the plugin jar, and any option that's missing on disk (typically after upgrading to a version that added one) is added with its default value — existing settings are never touched. Since re-saving a YAML file with Bukkit's config API drops hand-written comments, this only re-saves a file when something was actually missing, and always leaves a `<file>.bak` copy of the pre-update version alongside it first.
 
 <details>
 <summary>Example chat format from <code>config.yml</code></summary>
@@ -300,8 +312,6 @@ mvn clean package
 - **Without PacketEvents installed**: overhead nametags and the tablist's reserved-slot filler are silently disabled (everything else, including tablist header/footer, still works); `/spectate` refuses to run at all rather than offer a moderator a false sense of invisibility.
 - The guild-tag second nametag line rides as a passenger entity on the player; vanilla doesn't document the exact height a passenger-mounted entity renders at, so `nametag.guild-tag.y-offset` may need visual tuning in-game.
 - Random teleport is opt-in per world with configurable cost per use.
-- Stronghold blocking only prevents **new** generation — strongholds in already-generated chunks remain, and the datapack needs one world reload/server restart after first install.
-- Nether portal blocking prevents new portal **creation**; portals that existed before the plugin was installed remain usable.
 - The Vault bridge is synchronous by contract (Vault's API returns plain doubles), so third-party plugins calling it from a region thread may block briefly on uncached (offline-player) balance lookups.
 - Kills are credited via Bukkit's `PlayerDeathEvent#getKiller()`, which is only populated for direct player-vs-player damage — environmental deaths (fall, lava, void, etc.) always count as a death but never as anyone's kill, and any death resets the victim's killstreak regardless of cause.
 - `/statshologram` and the MiniPlaceholders expansions (stats/economy/guild) were verified with a standalone SQL smoke test against a real SQLite engine and a clean `mvn package`, but not against a live FancyHolograms installation or in-game — no Folia server was available in the environment these were built in.

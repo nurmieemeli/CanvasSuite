@@ -24,12 +24,12 @@ commands:
   eco:
     description: Administrate the economy.
     usage: /eco <give|take|set> <player> <amount>
-  buy:
-    description: Open the server shop.
-    usage: /buy
   sell:
     description: Sell items from your inventory.
     usage: /sell
+  market:
+    description: Browse, search, buy, and list player-sold items on the market.
+    usage: /market [sell <price>|search <query>|mine|cancel <id>]
   crate:
     description: Manage crates (admin) - keys are used automatically by right-clicking a bound crate block.
     usage: /crate <create|remove|key> ...
@@ -105,6 +105,9 @@ commands:
   statshologram:
     description: Create, remove, or list leaderboard holograms (requires FancyHolograms).
     usage: /statshologram <create|remove|list> ...
+  help:
+    description: Browse server help articles, organized into categories.
+    usage: /help [category] [article]
 
 permissions:
   onesmp.admin:
@@ -122,8 +125,8 @@ permissions:
       onesmp.maintenance.admin: true
   onesmp.economy.use: { default: true }
   onesmp.economy.admin: { default: op }
-  onesmp.shop.use: { default: true }
   onesmp.shop.sell: { default: true }
+  onesmp.market.use: { default: true }
   onesmp.crate.use: { default: true }
   onesmp.crate.admin: { default: op }
   onesmp.home.use: { default: true }
@@ -146,3 +149,4 @@ permissions:
   onesmp.msg.socialspy: { default: op }
   onesmp.stats.use: { default: true }
   onesmp.stats.hologram.admin: { default: op }
+  onesmp.help.use: { default: true }

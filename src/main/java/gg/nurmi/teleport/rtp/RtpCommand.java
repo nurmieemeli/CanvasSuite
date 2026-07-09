@@ -3,7 +3,6 @@ package gg.nurmi.teleport.rtp;
 import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.teleport.rtp.gui.RtpWorldSelectGui;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -45,7 +44,7 @@ public final class RtpCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        World world = Bukkit.getWorld(args[0]);
+        World world = plugin.worlds().getWorld(args[0]);
         if (world == null) {
             plugin.messages().send(player, "general.world-not-found", Placeholder.unparsed("world", args[0]));
             return true;

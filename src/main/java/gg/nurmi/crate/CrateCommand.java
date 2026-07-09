@@ -133,10 +133,12 @@ public final class CrateCommand implements CommandExecutor, TabCompleter {
         }
 
         ItemStack key = crateManager.createKey(typeKey, amount);
-        Map<Integer, ItemStack> leftover = target.getInventory().addItem(key);
-        for (ItemStack overflow : leftover.values()) {
-            target.getWorld().dropItemNaturally(target.getLocation(), overflow);
-        }
+        plugin.scheduler().runAtEntity(target, () -> {
+            Map<Integer, ItemStack> leftover = target.getInventory().addItem(key);
+            for (ItemStack overflow : leftover.values()) {
+                target.getWorld().dropItemNaturally(target.getLocation(), overflow);
+            }
+        }, () -> {});
 
         plugin.messages().send(sender, "crate.key-given",
                 Placeholder.unparsed("amount", String.valueOf(amount)),

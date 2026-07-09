@@ -38,3 +38,8 @@ maintenance:
   on: [enable]
   off: [disable]
   status: [info]
+market:
+  sell: []
+  search: [find]
+  mine: [my, listings]
+  cancel: [remove, delete]

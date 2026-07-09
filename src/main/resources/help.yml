@@ -1,0 +1,92 @@
+# Every display-name/description/title/body/message value supports MiniMessage formatting, including <prefix>.
+# body is a list of lines, joined with a line break in the article dialog.
+messages:
+  empty: "<prefix><gray>No help articles are configured yet."
+  category-not-found: "<prefix><red>No help category named <white><category></white> exists."
+  article-not-found: "<prefix><red>No help article named <white><article></white> exists in that category."
+
+categories:
+  getting-started:
+    display-name: "<green>Getting Started"
+    icon: COMPASS
+    description: "New here? Start with the basics."
+    articles:
+      rules:
+        title: "<white>Server Rules"
+        body:
+          - "Be respectful — no harassment, hate speech, or spam."
+          - "No griefing, stealing, or destroying others' builds outside marked areas."
+          - "No cheats, hacked clients, or exploiting bugs/duplication glitches."
+          - "Staff decisions are final; appeal through the support channels."
+      spawn:
+        title: "<white>Spawn & Getting Around"
+        body:
+          - "<white>/spawn</white> teleports you back to spawn."
+          - "<white>/sethome</white> and <white>/home</white> save and return to your own locations."
+          - "<white>/tpa <player></white> requests to teleport to another player; <white>/tpaccept</white> or <white>/tpdeny</white> to respond."
+          - "<white>/rtp</white> randomly teleports you somewhere unexplored."
+  economy:
+    display-name: "<gold>Economy"
+    icon: GOLD_INGOT
+    description: "Money, trading, and the player market."
+    articles:
+      balance:
+        title: "<white>Your Balance"
+        body:
+          - "<white>/balance</white> checks your own balance; <white>/balance <player></white> checks someone else's."
+          - "<white>/pay <player> <amount></white> sends money directly to another player."
+          - "<white>/baltop</white> shows the richest players on the server."
+      shop:
+        title: "<white>Selling to the Server"
+        body:
+          - "<white>/sell</white> opens a menu — drop items in and confirm to sell them instantly for a fixed price."
+      market:
+        title: "<white>Player Market"
+        body:
+          - "<white>/market sell <price></white> lists the item in your hand for other players to buy."
+          - "<white>/market</white> browses active listings; <white>/market search <query></white> filters by item name."
+          - "<white>/market mine</white> shows your own listings, which you can cancel to reclaim the item."
+  teleport:
+    display-name: "<aqua>Teleportation"
+    icon: ENDER_PEARL
+    description: "Homes, warps, and getting to other players."
+    articles:
+      homes:
+        title: "<white>Homes"
+        body:
+          - "<white>/sethome [name]</white> saves a home at your location."
+          - "<white>/home [name]</white> teleports you there; <white>/delhome <name></white> removes it."
+      warps:
+        title: "<white>Warps"
+        body:
+          - "<white>/warp [name]</white> teleports to a server warp, or lists them with no name given."
+      tpa:
+        title: "<white>Player Requests"
+        body:
+          - "<white>/tpa <player></white> asks to teleport to them; <white>/tpahere <player></white> asks them to come to you."
+          - "<white>/tpaccept</white> and <white>/tpdeny</white> respond to a pending request."
+  guilds:
+    display-name: "<light_purple>Guilds"
+    icon: SHIELD
+    description: "Team up with other players."
+    articles:
+      basics:
+        title: "<white>Creating a Guild"
+        body:
+          - "<white>/guild create <name></white> creates a guild; <white>/guild invite <player></white> invites someone."
+          - "<white>/guild accept</white> joins a guild you've been invited to."
+          - "<white>/guild chat</white> toggles sending your messages only to guild members."
+      home:
+        title: "<white>Guild Home"
+        body:
+          - "<white>/guild sethome</white> sets your guild's shared home; <white>/guild home</white> teleports there."
+  crates:
+    display-name: "<yellow>Crates"
+    icon: CHEST
+    description: "Opening crates and using keys."
+    articles:
+      opening:
+        title: "<white>Opening a Crate"
+        body:
+          - "Right-click a bound crate block while holding a matching key to open it."
+          - "Keys are ordinary-looking items tagged for a specific crate type — they can't be faked."
