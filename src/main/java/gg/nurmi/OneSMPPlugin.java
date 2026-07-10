@@ -31,7 +31,7 @@ import gg.nurmi.maintenance.MaintenanceManager;
 import gg.nurmi.market.MarketCommand;
 import gg.nurmi.market.MarketManager;
 import gg.nurmi.combat.CombatLogListener;
-import gg.nurmi.death.DeathMessageListener;
+import gg.nurmi.message.DeathMessageListener;
 import gg.nurmi.stats.hologram.LeaderboardHologramCommand;
 import gg.nurmi.stats.hologram.LeaderboardHologramManager;
 import gg.nurmi.message.MessageService;

@@ -1,4 +1,4 @@
-package gg.nurmi.death;
+package gg.nurmi.message;
 
 import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.RecentAttackerTracker;
