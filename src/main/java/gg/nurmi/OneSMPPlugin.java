@@ -85,6 +85,11 @@ import gg.nurmi.teleport.TpaCommand;
 import gg.nurmi.teleport.TpaManager;
 import gg.nurmi.teleport.WarpCommand;
 import gg.nurmi.teleport.WarpManager;
+import gg.nurmi.vote.VoteCommand;
+import gg.nurmi.vote.VoteListener;
+import gg.nurmi.vote.VoteManager;
+import gg.nurmi.vote.VotePlaceholderExpansion;
+import gg.nurmi.vote.VoteTopCommand;
 import gg.nurmi.world.WorldCommand;
 import gg.nurmi.world.WorldManager;
 import io.github.miniplaceholders.api.Expansion;
@@ -119,6 +124,8 @@ public final class OneSMPPlugin extends JavaPlugin {
     private MaintenanceManager maintenanceManager;
     private MarketManager marketManager;
     private HelpManager helpManager;
+    private VoteManager voteManager;
+    private Expansion votePlaceholderExpansion;
 
     @Override
     public void onEnable() {
@@ -160,6 +167,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         registerHolograms();
         registerHelp();
         registerLinks();
+        registerVotes();
 
         new AliasManager(this).applyAliases();
 
@@ -360,6 +368,18 @@ public final class OneSMPPlugin extends JavaPlugin {
                 new LinkCommand(this, "links.store-url", "links.store", "onesmp.store.use"));
     }
 
+    private void registerVotes() {
+        this.voteManager = new VoteManager(this);
+        VoteListener voteListener = new VoteListener(this, voteManager);
+        getServer().getPluginManager().registerEvents(voteListener, this);
+        voteListener.registerIfAvailable();
+
+        Objects.requireNonNull(getCommand("vote")).setExecutor(new VoteCommand(this, voteManager));
+        Objects.requireNonNull(getCommand("votetop")).setExecutor(new VoteTopCommand(this, voteManager));
+
+        this.votePlaceholderExpansion = VotePlaceholderExpansion.register(this, voteManager);
+    }
+
     private void registerCrates() {
         this.crateManager = new CrateManager(this);
         CrateCommand crateCommand = new CrateCommand(this, crateManager);
@@ -403,6 +423,9 @@ public final class OneSMPPlugin extends JavaPlugin {
         if (guildPlaceholderExpansion != null && guildPlaceholderExpansion.registered()) {
             guildPlaceholderExpansion.unregister();
         }
+        if (votePlaceholderExpansion != null && votePlaceholderExpansion.registered()) {
+            votePlaceholderExpansion.unregister();
+        }
         if (database != null) {
             database.close();
         }
@@ -443,6 +466,10 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     public HelpManager help() {
         return helpManager;
+    }
+
+    public VoteManager votes() {
+        return voteManager;
     }
 
     public CrateManager crates() {

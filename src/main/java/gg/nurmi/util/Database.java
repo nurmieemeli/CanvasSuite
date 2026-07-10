@@ -199,6 +199,27 @@ public final class Database {
                     created_at BIGINT NOT NULL
                 )
                 """.formatted(idType));
+
+            statement.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS player_votes (
+                    uuid VARCHAR(36) PRIMARY KEY,
+                    name VARCHAR(16),
+                    total_votes INT NOT NULL DEFAULT 0,
+                    current_streak INT NOT NULL DEFAULT 0,
+                    best_streak INT NOT NULL DEFAULT 0,
+                    last_vote_epoch_day BIGINT NOT NULL DEFAULT 0
+                )
+                """);
+
+            statement.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS pending_vote_rewards (
+                    id %s,
+                    uuid VARCHAR(36) NOT NULL,
+                    crate_type VARCHAR(32) NOT NULL,
+                    key_amount INT NOT NULL,
+                    created_at BIGINT NOT NULL
+                )
+                """.formatted(idType));
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to run OneSMP schema migration", ex);
         }

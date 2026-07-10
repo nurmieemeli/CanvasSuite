@@ -363,3 +363,16 @@ stats:
   hologram-not-found: "<prefix><fail><red>Kärkilistahologrammia nimeltä <white><name></white> ei ole olemassa."
   hologram-list-header: "<prefix><gray>Kärkilistahologrammit:"
   hologram-list-entry: "<gray> - <white><name></white> <dark_gray>(<stat>)</dark_gray>"
+
+vote:
+  not-configured: "<prefix><fail><red>Äänestyssivustoja ei ole vielä määritetty."
+  header: "<prefix><gray>Äänestä palvelinta osoitteissa:"
+  site-entry: "<gray> - <white><name></white>: <url>"
+  your-stats: "<prefix><gray>Olet äänestänyt <white><total></white> kertaa <dark_gray>(<white><streak></white> päivän putki)</dark_gray>."
+  thanks: "<prefix><success><green>Kiitos äänestyksestä! Palkintosi on lähetetty."
+  broadcast: "<prefix><yellow><player></yellow> äänesti palvelinta! Äänestä komennolla <white>/vote"
+  streak-milestone: "<prefix><gold><player></gold> saavutti <white><streak></white> päivän äänestysputken ja ansaitsi bonuspalkinnon!"
+  pending-delivered: "<prefix><success><green>Sait <white><amount></white> arkkuavainta, jotka ansaitsit äänestämällä poissa ollessasi."
+  gui-title: "<gradient:#4ade80:#22c55e><bold>Äänestyksen kärkilista</bold></gradient>"
+  gui-rank-name: "<yellow>#<rank> <white><target>"
+  gui-value-lore: "<gray><value> ääntä"

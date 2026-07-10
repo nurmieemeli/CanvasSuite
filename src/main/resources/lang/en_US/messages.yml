@@ -363,3 +363,16 @@ stats:
   hologram-not-found: "<prefix><fail><red>No leaderboard hologram named <white><name></white> exists."
   hologram-list-header: "<prefix><gray>Leaderboard holograms:"
   hologram-list-entry: "<gray> - <white><name></white> <dark_gray>(<stat>)</dark_gray>"
+
+vote:
+  not-configured: "<prefix><fail><red>No vote sites have been configured yet."
+  header: "<prefix><gray>Vote for the server at:"
+  site-entry: "<gray> - <white><name></white>: <url>"
+  your-stats: "<prefix><gray>You've voted <white><total></white> times <dark_gray>(<white><streak></white> day streak)</dark_gray>."
+  thanks: "<prefix><success><green>Thanks for voting! Your reward has been sent."
+  broadcast: "<prefix><yellow><player></yellow> voted for the server! Vote with <white>/vote"
+  streak-milestone: "<prefix><gold><player></gold> reached a <white><streak></white>-day vote streak and earned a bonus reward!"
+  pending-delivered: "<prefix><success><green>You picked up <white><amount></white> crate key(s) earned from voting while you were away."
+  gui-title: "<gradient:#4ade80:#22c55e><bold>Vote Leaderboard</bold></gradient>"
+  gui-rank-name: "<yellow>#<rank> <white><target>"
+  gui-value-lore: "<gray><value> votes"

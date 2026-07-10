@@ -184,3 +184,31 @@ combat-log:
 # Requires FancyHolograms (disables /statshologram otherwise). FancyHolograms owns the hologram entities themselves; this only controls how often their text is refreshed.
 hologram:
   refresh-interval-seconds: 30
+
+# Requires NuVotifier installed alongside OneSMP to actually receive votes from listing sites - without it,
+# /vote just shows the configured links below with no way to trigger a reward automatically.
+vote:
+  enabled: true
+  # Announces every vote to the whole server when true; the voter always gets a private thank-you regardless.
+  broadcast: true
+  reward:
+    money: 500.0
+    # Must match a crate type key defined in lang/<language>/crates.yml.
+    crate-type: common
+    crate-key-amount: 1
+  streak:
+    # Extra reward on top of the base one above when a player's consecutive daily vote streak hits one of
+    # these numbers. Voting more than once in the same day doesn't advance the streak, just the total count.
+    milestones:
+      7:
+        money: 2000.0
+        crate-key-amount: 3
+      30:
+        money: 10000.0
+        crate-key-amount: 10
+  # Shown by /vote. Each needs a name and a url.
+  sites:
+    - name: "PlanetMinecraft"
+      url: "https://www.planetminecraft.com/server/example/vote/"
+    - name: "Minecraft-MP"
+      url: "https://minecraft-mp.com/server/00000/vote/"

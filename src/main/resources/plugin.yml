@@ -6,7 +6,7 @@ folia-supported: true
 description: ${project.description}
 
 depend: [MiniPlaceholders]
-softdepend: [Vault, PacketEvents, LuckPerms, FancyHolograms]
+softdepend: [Vault, PacketEvents, LuckPerms, FancyHolograms, NuVotifier]
 
 commands:
   onesmp:
@@ -114,6 +114,12 @@ commands:
   store:
     description: Get a link to the server's store.
     usage: /store
+  vote:
+    description: See where to vote for the server and check your vote streak.
+    usage: /vote
+  votetop:
+    description: View the vote leaderboard.
+    usage: /votetop
 
 permissions:
   onesmp.admin:
@@ -158,3 +164,4 @@ permissions:
   onesmp.help.use: { default: true }
   onesmp.discord.use: { default: true }
   onesmp.store.use: { default: true }
+  onesmp.vote.use: { default: true }

@@ -40,6 +40,7 @@ A single-jar SMP plugin for <a href="https://papermc.io/software/paper">Paper</a
 | [MiniPlaceholders-LuckPerms expansion](https://github.com/MiniPlaceholders/MiniPlaceholders) | Optional | Resolves `<luckperms_prefix>`/`<luckperms_suffix>` in chat, nametags, and the scoreboard |
 | [Vault](https://www.spigotmc.org/resources/vault.34315/) | Optional | If present, OneSMP registers itself as the Vault economy provider |
 | [FancyHolograms](https://modrinth.com/plugin/fancyholograms) | Optional | Powers `/statshologram` and the name hologram above a bound crate |
+| [NuVotifier](https://github.com/NuVotifier/NuVotifier) | Optional | Powers automatic vote rewards; without it `/vote` still shows links, just no auto-reward |
 | MySQL server | Optional | Falls back to a local SQLite file automatically |
 
 Every optional dependency degrades gracefully when missing — see [Notes & Limitations](#notes--limitations). All player-facing text renders through [Adventure MiniMessage](https://docs.advntr.dev/minimessage/format.html) with [MiniPlaceholders](https://github.com/MiniPlaceholders/MiniPlaceholders) support (global, audience, and relational placeholders).
@@ -103,6 +104,9 @@ A MiniMessage/MiniPlaceholders-driven sidebar scoreboard with a configurable tit
 ### Links
 `/discord` and `/store` print a clickable, hoverable link built from `links.discord-url`/`links.store-url` in `config.yml`.
 
+### Vote Rewards
+Hooks into [NuVotifier](https://github.com/NuVotifier/NuVotifier) (optional, via reflection — no compile-time dependency) to reward players for voting: configurable money and crate keys per vote, plus a bonus reward at consecutive-daily-vote streak milestones (e.g. 7, 30 days). Crate keys are delivered immediately if the voter is online, or queued and handed over the next time they join if not. `/vote` shows the configured vote-site links and the player's own vote count/streak; `/votetop` opens a paginated leaderboard GUI. Without NuVotifier installed, `/vote` still works as a plain link list — rewards just won't trigger automatically.
+
 ### Feedback & Effects
 Every command reply is automatically paired with a sound — dedicated `<success>`/`<fail>` markers right after `<prefix>` in `messages.yml` pick the chime or the denial grunt, kept deliberately separate from whatever color the message actually uses so translating or restyling a message can never break its sound. Teleporting plays a particle/sound burst at both ends; every chest-GUI menu plays a soft click on open; joining plays a short chime. Each category (and cosmetic effects as a whole) is independently toggleable under `effects` in `config.yml` — purely cosmetic, never affects whether an action succeeds.
 
@@ -143,6 +147,8 @@ Six languages ship out of the box — `en_US`, `fi_FI`, `sv_SE`, `de_DE`, `ru_RU
 | `/maintenance <on\|off\|status>` | Toggle maintenance mode (backed by the server whitelist) | `onesmp.maintenance.admin` |
 | `/discord` | Print the Discord invite link | `onesmp.discord.use` |
 | `/store` | Print the store link | `onesmp.store.use` |
+| `/vote` | Show vote-site links and your vote count/streak | `onesmp.vote.use` |
+| `/votetop` | Vote count leaderboard GUI | `onesmp.vote.use` |
 
 Every command's own name always works regardless of configuration — the aliases above are just the shipped defaults. Both command aliases and per-subcommand aliases (e.g. `/world tp` for `/world teleport`) are editable via `lang/<language>/aliases.yml`/`subcommand-aliases.yml`; `subcommand-aliases.yml` changes apply on `/onesmp reload`, while `aliases.yml` needs a restart since those aliases are registered into Bukkit's command map once at enable.
 
@@ -179,6 +185,7 @@ Every command's own name always works regardless of configuration — the aliase
 | `onesmp.help.use` | true | `/help` |
 | `onesmp.discord.use` | true | `/discord` |
 | `onesmp.store.use` | true | `/store` |
+| `onesmp.vote.use` | true | `/vote`, `/votetop` |
 
 </details>
 
@@ -271,6 +278,7 @@ HikariCP, the MySQL driver, and the SQLite driver are shaded and relocated (`gg.
 - The Vault bridge is synchronous by contract, so third-party plugins calling it may block briefly on uncached balance lookups.
 - Kill credit falls back from `PlayerDeathEvent#getKiller()` (direct melee only) to the last player who damaged the victim - directly, via a shot projectile, via TNT they lit, via an End Crystal they broke, or via a respawn anchor they triggered - within `stats.indirect-kill-window-seconds`. A bed exploding in the Nether/End is the same kind of block-only explosion as a respawn anchor but isn't attributed yet. A death with no player behind it at all (fall with no recent hit, natural lava, despawning) still only counts as a death, and always resets the victim's own killstreak regardless of cause.
 - Player market listings are a straightforward "one listing, one buyer, all-or-nothing" design — there's no partial-quantity purchase of a bulk listing.
+- The NuVotifier hook is entirely reflection-based (no compile-time dependency), so it keeps working across NuVotifier versions as long as `com.vexsoftware.votifier.model.VotifierEvent` and its `getVote()`/`getUsername()` methods stay put; a future NuVotifier rewrite that relocates or renames those would silently stop triggering rewards until updated.
 
 ---
 
