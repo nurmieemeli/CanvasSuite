@@ -4,7 +4,7 @@
 
 <p align="center">
   <img alt="Java 25" src="https://img.shields.io/badge/Java-25-38bdf8?style=for-the-badge&logo=openjdk&logoColor=white">
-  <img alt="Folia native" src="https://img.shields.io/badge/Folia-native-818cf8?style=for-the-badge">
+  <img alt="Paper native" src="https://img.shields.io/badge/Paper-native-818cf8?style=for-the-badge">
   <img alt="Minecraft 1.21.8+" src="https://img.shields.io/badge/Minecraft-1.21.8%2B-38bdf8?style=for-the-badge&logo=minecraft&logoColor=white">
   <img alt="Build with Maven" src="https://img.shields.io/badge/build-Maven-818cf8?style=for-the-badge&logo=apachemaven&logoColor=white">
 </p>
@@ -12,7 +12,7 @@
 <p align="center"><b>Seek no more, you've found it.</b></p>
 
 <p align="center">
-A single-jar SMP plugin for <a href="https://forums.papermc.io/forums/folia.107/">Folia</a> servers: economy, a player-to-player market, an admin shop, crates, teleportation (homes/warps/TPA/RTP), guilds, world creation, a void spawn world, chat formatting, nametags/tablist/scoreboard, player stats with leaderboard holograms, moderator tools, private messaging, and native-dialog help articles — built entirely against Folia's region/entity schedulers, with chest GUIs and Paper dialogs wherever they make sense.
+A single-jar SMP plugin for <a href="https://papermc.io/software/paper">Paper</a> servers: economy, a player-to-player market, an admin shop, crates, teleportation (homes/warps/TPA/RTP), guilds, world creation, a void spawn world, chat formatting, nametags/tablist/scoreboard, player stats with leaderboard holograms, moderator tools, private messaging, and native-dialog help articles — built against the standard Paper API and Bukkit scheduler, with chest GUIs and Paper dialogs wherever they make sense.
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@ A single-jar SMP plugin for <a href="https://forums.papermc.io/forums/folia.107/
 
 | Dependency | Required | Notes |
 |---|---|---|
-| Folia 1.21.8+ | ✅ | Or a Folia-based fork (e.g. CanvasMC) on an equivalent version |
+| Paper 1.21.8+ | ✅ | Or a Paper-based fork on an equivalent version |
 | Java 25 | ✅ | |
 | [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) | ✅ | Hard dependency — the plugin won't load without it |
 | [PacketEvents](https://www.spigotmc.org/resources/packetevents.80279/) | Optional | Powers overhead nametags, `/spectate`, and the tablist's reserved-slot filler |
@@ -262,16 +262,16 @@ Requires JDK 25 and Maven. The shaded jar lands at `target/OneSMP-<version>.jar`
 mvn clean package
 ```
 
-HikariCP, the MySQL driver, and the SQLite driver are shaded and relocated (`gg.nurmi.libs.*`) so they never collide with another plugin's copies. `folia-api`, MiniPlaceholders, VaultAPI, PacketEvents, the LuckPerms API, and FancyHolograms are all `provided` — supplied by the server/other plugins at runtime, not bundled.
+HikariCP, the MySQL driver, and the SQLite driver are shaded and relocated (`gg.nurmi.libs.*`) so they never collide with another plugin's copies. `paper-api`, MiniPlaceholders, VaultAPI, PacketEvents, the LuckPerms API, and FancyHolograms are all `provided` — supplied by the server/other plugins at runtime, not bundled.
 
 ## Notes & Limitations
 
 - **Without PacketEvents**: overhead nametags and the tablist's reserved-slot filler are silently disabled (everything else still works); `/spectate` refuses to run at all.
 - The guild-tag nametag line rides as a passenger entity; vanilla doesn't document the exact height a passenger renders at, so `nametag.guild-tag.y-offset` may need visual tuning.
-- The Vault bridge is synchronous by contract, so third-party plugins calling it from a region thread may block briefly on uncached balance lookups.
+- The Vault bridge is synchronous by contract, so third-party plugins calling it from the main thread may block briefly on uncached balance lookups.
 - Kill credit falls back from `PlayerDeathEvent#getKiller()` (direct melee only) to the last player who damaged the victim - directly, via a shot projectile, via TNT they lit, via an End Crystal they broke, or via a respawn anchor they triggered - within `stats.indirect-kill-window-seconds`. A bed exploding in the Nether/End is the same kind of block-only explosion as a respawn anchor but isn't attributed yet. A death with no player behind it at all (fall with no recent hit, natural lava, despawning) still only counts as a death, and always resets the victim's own killstreak regardless of cause.
 - Player market listings are a straightforward "one listing, one buyer, all-or-nothing" design — there's no partial-quantity purchase of a bulk listing.
 
 ---
 
-<p align="center"><sub>Built directly against the <a href="https://github.com/FoliaMC/Folia">Folia API</a>. No single "main thread": every feature here is written against Folia's region/entity schedulers. Seek no more, you've found it.</sub></p>
+<p align="center"><sub>Built directly against the <a href="https://papermc.io/software/paper">Paper API</a> and its Bukkit scheduler. Seek no more, you've found it.</sub></p>
