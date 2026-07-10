@@ -168,6 +168,18 @@ stats:
   killstreak-broadcast-milestones: [5, 10, 25, 50, 100]
   # Frequent autosave limits how much playtime a crash could lose (kills/deaths persist immediately regardless).
   playtime-autosave-interval-seconds: 60
+  # A death with no direct killer (fall, lava, void...) still credits the last player who hit the victim -
+  # directly, via a shot projectile, via TNT they lit, via an End Crystal they broke, or via a respawn anchor
+  # they triggered - as long as that hit landed within this many seconds.
+  indirect-kill-window-seconds: 15
+
+combat-log:
+  enabled: true
+  # A player who disconnects within this many seconds of being hit by another player - directly, via a shot
+  # projectile, via TNT they lit, via an End Crystal they broke, or via a respawn anchor they triggered - is
+  # killed instead of safely logging out of the fight. Goes through the normal damage pipeline, so a totem of
+  # undying/resistance/absorption still applies as it would for any hit.
+  timeout-seconds: 15
 
 # Requires FancyHolograms (disables /statshologram otherwise). FancyHolograms owns the hologram entities themselves; this only controls how often their text is refreshed.
 hologram:

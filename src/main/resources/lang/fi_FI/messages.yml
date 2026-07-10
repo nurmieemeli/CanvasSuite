@@ -261,6 +261,37 @@ join-leave:
   join: "<gray>[<green>+</green>] <player_name>"
   leave: "<gray>[<red>-</red>] <player_name>"
 
+# Korvaa vanhan kuolinviestin (joka näytettäisiin pelaajan omalla kieliasetuksella) niin, että kaikki näkevät
+# sen palvelimen valitulla kielellä. <victim>/<killer>/<mob> ovat pelkkiä pelaajan/olennon nimiä.
+death:
+  pvp: "<white><killer></white> tappoi pelaajan <white><victim></white>"
+  mob: "<white><mob></white> tappoi pelaajan <white><victim></white>"
+  cause-fall: "<white><victim></white> putosi korkealta"
+  cause-fire: "<white><victim></white> syttyi tuleen"
+  cause-fire-tick: "<white><victim></white> paloi kuoliaaksi"
+  cause-lava: "<white><victim></white> yritti uida laavassa"
+  cause-drowning: "<white><victim></white> hukkui"
+  cause-explosion: "<white><victim></white> räjähti"
+  cause-void: "<white><victim></white> putosi maailman ulkopuolelle"
+  cause-lightning: "<white><victim></white> osui salama"
+  cause-starvation: "<white><victim></white> nääntyi nälkään"
+  cause-poison: "<white><victim></white> kuoli myrkkyyn"
+  cause-magic: "<white><victim></white> tapettiin taikuudella"
+  cause-wither: "<white><victim></white> kuihtui"
+  cause-falling-block: "<white><victim></white> jäi putoavan lohkon alle"
+  cause-thorns: "<white><victim></white> kuoli yrittäessään vahingoittaa toista olentoa"
+  cause-dragon-breath: "<white><victim></white> paahtui lohikäärmeen hengityksessä"
+  cause-fly-into-wall: "<white><victim></white> koki liike-energiaa"
+  cause-hot-floor: "<white><victim></white> huomasi lattian olevan laavaa"
+  cause-cramming: "<white><victim></white> puristui liikaa"
+  cause-freeze: "<white><victim></white> jäätyi kuoliaaksi"
+  cause-sonic-boom: "<white><victim></white> tuhoutui soonisesti varautuneesta kirkaisusta"
+  cause-world-border: "<white><victim></white> poistui maailman rajojen ulkopuolelle"
+  cause-suffocation: "<white><victim></white> tukehtui seinään"
+  cause-melting: "<white><victim></white> suli pois"
+  cause-contact: "<white><victim></white> pistettiin kuoliaaksi"
+  generic: "<white><victim></white> kuoli"
+
 world:
   gui-list-title: "<gradient:#38bdf8:#818cf8><bold>Hallitut Maailmat</bold></gradient>"
   gui-create-title: "<gradient:#34d399:#10b981><bold>Luo Maailma</bold></gradient>"

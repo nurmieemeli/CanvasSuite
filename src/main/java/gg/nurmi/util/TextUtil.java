@@ -2,6 +2,7 @@ package gg.nurmi.util;
 
 import gg.nurmi.OneSMPPlugin;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 public final class TextUtil {
 
@@ -9,7 +10,15 @@ public final class TextUtil {
     }
 
     public static String prettyName(Material material) {
-        String[] parts = material.name().split("_");
+        return prettyName(material.name());
+    }
+
+    public static String prettyName(EntityType entityType) {
+        return prettyName(entityType.name());
+    }
+
+    private static String prettyName(String rawEnumName) {
+        String[] parts = rawEnumName.split("_");
         StringBuilder builder = new StringBuilder();
         for (String part : parts) {
             if (part.isEmpty()) {

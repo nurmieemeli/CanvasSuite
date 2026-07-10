@@ -1,6 +1,7 @@
 package gg.nurmi.stats;
 
 import gg.nurmi.OneSMPPlugin;
+import gg.nurmi.util.RecentAttackerTracker;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,10 +17,12 @@ public final class StatsListener implements Listener {
 
     private final OneSMPPlugin plugin;
     private final StatsManager statsManager;
+    private final RecentAttackerTracker attackerTracker;
 
-    public StatsListener(OneSMPPlugin plugin, StatsManager statsManager) {
+    public StatsListener(OneSMPPlugin plugin, StatsManager statsManager, RecentAttackerTracker attackerTracker) {
         this.plugin = plugin;
         this.statsManager = statsManager;
+        this.attackerTracker = attackerTracker;
     }
 
     @EventHandler
@@ -37,12 +40,15 @@ public final class StatsListener implements Listener {
         Player victim = event.getEntity();
         statsManager.recordDeath(victim.getUniqueId(), victim.getName());
 
-        Player killer = victim.getKiller();
-        if (killer == null || killer.getUniqueId().equals(victim.getUniqueId())) {
+        RecentAttackerTracker.KillCredit credit = attackerTracker.resolve(victim);
+        if (credit == null) {
             return;
         }
-        int streak = statsManager.recordKill(killer.getUniqueId(), killer.getName());
-        broadcastMilestone(killer, streak);
+        int streak = statsManager.recordKill(credit.uuid(), credit.name());
+        Player killerOnline = Bukkit.getPlayer(credit.uuid());
+        if (killerOnline != null) {
+            broadcastMilestone(killerOnline, streak);
+        }
     }
 
     private void broadcastMilestone(Player killer, int streak) {

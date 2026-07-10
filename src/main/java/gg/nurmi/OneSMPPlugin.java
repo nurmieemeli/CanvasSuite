@@ -30,6 +30,8 @@ import gg.nurmi.maintenance.MaintenanceListener;
 import gg.nurmi.maintenance.MaintenanceManager;
 import gg.nurmi.market.MarketCommand;
 import gg.nurmi.market.MarketManager;
+import gg.nurmi.combat.CombatLogListener;
+import gg.nurmi.death.DeathMessageListener;
 import gg.nurmi.stats.hologram.LeaderboardHologramCommand;
 import gg.nurmi.stats.hologram.LeaderboardHologramManager;
 import gg.nurmi.message.MessageService;
@@ -65,6 +67,7 @@ import gg.nurmi.stats.StatsListener;
 import gg.nurmi.stats.StatsManager;
 import gg.nurmi.stats.StatsPlaceholderExpansion;
 import gg.nurmi.stats.StatsTopCommand;
+import gg.nurmi.util.RecentAttackerTracker;
 import gg.nurmi.util.Database;
 import gg.nurmi.tablist.TablistListener;
 import gg.nurmi.tablist.TablistManager;
@@ -177,7 +180,11 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     private void registerStats() {
         this.statsManager = new StatsManager(this);
-        getServer().getPluginManager().registerEvents(new StatsListener(this, statsManager), this);
+        RecentAttackerTracker attackerTracker = new RecentAttackerTracker(this);
+        getServer().getPluginManager().registerEvents(attackerTracker, this);
+        getServer().getPluginManager().registerEvents(new StatsListener(this, statsManager, attackerTracker), this);
+        getServer().getPluginManager().registerEvents(new DeathMessageListener(this, attackerTracker), this);
+        getServer().getPluginManager().registerEvents(new CombatLogListener(this, attackerTracker), this);
 
         Objects.requireNonNull(getCommand("stats")).setExecutor(new StatsCommand(this, statsManager));
         Objects.requireNonNull(getCommand("statstop")).setExecutor(new StatsTopCommand(this, statsManager));

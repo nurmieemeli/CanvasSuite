@@ -261,6 +261,37 @@ join-leave:
   join: "<gray>[<green>+</green>] <player_name>"
   leave: "<gray>[<red>-</red>] <player_name>"
 
+# Sustituye el mensaje de muerte habitual (que si no se mostraría en el idioma del cliente de cada jugador)
+# para que todos lo vean en el idioma configurado del servidor. <victim>/<killer>/<mob> son solo nombres.
+death:
+  pvp: "<white><killer></white> mató a <white><victim></white>"
+  mob: "<white><mob></white> mató a <white><victim></white>"
+  cause-fall: "<white><victim></white> cayó desde las alturas"
+  cause-fire: "<white><victim></white> ardió en llamas"
+  cause-fire-tick: "<white><victim></white> murió quemado"
+  cause-lava: "<white><victim></white> intentó nadar en lava"
+  cause-drowning: "<white><victim></white> se ahogó"
+  cause-explosion: "<white><victim></white> explotó"
+  cause-void: "<white><victim></white> cayó fuera del mundo"
+  cause-lightning: "<white><victim></white> fue alcanzado por un rayo"
+  cause-starvation: "<white><victim></white> murió de hambre"
+  cause-poison: "<white><victim></white> murió envenenado"
+  cause-magic: "<white><victim></white> murió por magia"
+  cause-wither: "<white><victim></white> se marchitó"
+  cause-falling-block: "<white><victim></white> fue aplastado por un bloque que caía"
+  cause-thorns: "<white><victim></white> murió al intentar dañar a otra criatura"
+  cause-dragon-breath: "<white><victim></white> se asó en el aliento del dragón"
+  cause-fly-into-wall: "<white><victim></white> experimentó energía cinética"
+  cause-hot-floor: "<white><victim></white> descubrió que el suelo era lava"
+  cause-cramming: "<white><victim></white> murió aplastado por aglomeración"
+  cause-freeze: "<white><victim></white> murió congelado"
+  cause-sonic-boom: "<white><victim></white> fue aniquilado por un grito sónico"
+  cause-world-border: "<white><victim></white> abandonó los límites de este mundo"
+  cause-suffocation: "<white><victim></white> se asfixió en una pared"
+  cause-melting: "<white><victim></white> se derritió"
+  cause-contact: "<white><victim></white> murió pinchado"
+  generic: "<white><victim></white> murió"
+
 world:
   gui-list-title: "<gradient:#38bdf8:#818cf8><bold>Mundos Gestionados</bold></gradient>"
   gui-create-title: "<gradient:#34d399:#10b981><bold>Crear Mundo</bold></gradient>"
