@@ -3,6 +3,7 @@ package gg.nurmi.teleport.rtp;
 import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.util.Cooldown;
 import gg.nurmi.util.LocationUtil;
+import gg.nurmi.world.WorldPaths;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public final class RtpManager {
@@ -59,6 +61,14 @@ public final class RtpManager {
         return section == null ? 0 : section.getDouble("cost", 0);
     }
 
+    // Player-facing, so it lives in messages.yml (translatable) rather than config.yml - falls back to
+    // the world's own (container-stripped) name if no rtp.world-names entry exists for it.
+    public String displayName(World world) {
+        String container = plugin.getConfig().getString("world-creation.container", "");
+        String logicalName = WorldPaths.strip(container, world.getName());
+        return plugin.messages().raw("rtp.world-names." + logicalName, logicalName);
+    }
+
     public List<World> enabledWorlds() {
         List<World> worlds = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
@@ -69,9 +79,21 @@ public final class RtpManager {
         return worlds;
     }
 
+    // World-creation config nests custom worlds under a container folder, so the Bukkit world name
+    // (e.g. "container/myworld") won't match the logical name admins write under rtp.worlds
+    // (e.g. "myworld"). Try the raw name first, then fall back to the container-stripped name.
     private ConfigurationSection worldSection(World world) {
         ConfigurationSection worlds = plugin.getConfig().getConfigurationSection("rtp.worlds");
-        return worlds == null ? null : worlds.getConfigurationSection(world.getName());
+        if (worlds == null) {
+            return null;
+        }
+        ConfigurationSection section = worlds.getConfigurationSection(world.getName());
+        if (section != null) {
+            return section;
+        }
+        String container = plugin.getConfig().getString("world-creation.container", "");
+        String logicalName = WorldPaths.strip(container, world.getName());
+        return logicalName.equals(world.getName()) ? null : worlds.getConfigurationSection(logicalName);
     }
 
     public void teleportRandomly(Player player, World world) {
@@ -87,36 +109,48 @@ public final class RtpManager {
             return;
         }
 
-        BigDecimal cost = BigDecimal.valueOf(cost(world));
-        if (cost.signum() > 0) {
-            plugin.economy().withdraw(player.getUniqueId(), cost).thenAccept(success -> {
-                if (!success) {
-                    plugin.messages().send(player, "rtp.insufficient-funds",
-                            Placeholder.unparsed("price", plugin.economy().format(cost)));
-                    return;
-                }
-                search(player, world);
-            });
-        } else {
-            search(player, world);
-        }
+        search(player, world);
     }
 
     private void search(Player player, World world) {
         Location cached = pollCached(world);
         if (cached != null) {
-            teleport(player, cached);
+            chargeAndTeleport(player, world, cached);
             return;
         }
 
         plugin.messages().send(player, "rtp.searching");
-        findSafeLocation(world, location -> teleport(player, location),
+        findSafeLocation(world, location -> chargeAndTeleport(player, world, location),
                 () -> plugin.messages().send(player, "rtp.failed"));
     }
 
-    private void teleport(Player player, Location location) {
-        applyCooldown(player.getUniqueId());
-        plugin.teleportExecutor().executeSafely(player, location, "rtp.success");
+    // Only charges once a destination actually exists, and refunds if the teleport itself still
+    // doesn't happen (combat block, warmup cancelled by movement/disconnect, etc.) - a player should
+    // never be charged for a random teleport that never occurred.
+    private void chargeAndTeleport(Player player, World world, Location location) {
+        BigDecimal cost = BigDecimal.valueOf(cost(world));
+        if (cost.signum() <= 0) {
+            teleport(player, location, BigDecimal.ZERO);
+            return;
+        }
+        plugin.economy().withdraw(player.getUniqueId(), cost).thenAccept(success -> {
+            if (!success) {
+                plugin.messages().send(player, "rtp.insufficient-funds",
+                        Placeholder.unparsed("price", plugin.economy().format(cost)));
+                return;
+            }
+            teleport(player, location, cost);
+        });
+    }
+
+    private void teleport(Player player, Location location, BigDecimal chargedCost) {
+        plugin.teleportExecutor().executeSafely(player, location, "rtp.success",
+                () -> applyCooldown(player.getUniqueId()),
+                () -> {
+                    if (chargedCost.signum() > 0) {
+                        plugin.economy().deposit(player.getUniqueId(), chargedCost);
+                    }
+                });
     }
 
     public Location pollCached(World world) {
@@ -124,7 +158,9 @@ public final class RtpManager {
         return queue == null ? null : queue.pollFirst();
     }
 
-    // Tops off one world's cache by at most one location per call (relies on being invoked repeatedly), skipping entirely under low TPS.
+    // Tops off every enabled, loaded, under-target world's cache by at most one location per call each
+    // (relies on being invoked repeatedly), skipping entirely under low TPS. All worlds are filled in
+    // parallel so one world's queue never starves another's while it fills up.
     public void precacheTick() {
         if (!plugin.getConfig().getBoolean("rtp.precache.enabled", true) || !filling.compareAndSet(false, true)) {
             return;
@@ -136,22 +172,36 @@ public final class RtpManager {
         }
 
         int targetSize = Math.max(0, plugin.getConfig().getInt("rtp.precache.target-size", 15));
+        List<World> worldsToFill = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
             if (!isEnabled(world)) {
                 continue;
             }
             ConcurrentLinkedDeque<Location> queue = precache.computeIfAbsent(world.getName(), ignored -> new ConcurrentLinkedDeque<>());
-            if (queue.size() >= targetSize) {
-                continue;
+            if (queue.size() < targetSize) {
+                worldsToFill.add(world);
             }
+        }
 
-            findSafeLocation(world, location -> {
-                queue.addLast(location);
-                filling.set(false);
-            }, () -> filling.set(false));
+        if (worldsToFill.isEmpty()) {
+            filling.set(false);
             return;
         }
-        filling.set(false);
+
+        AtomicInteger remaining = new AtomicInteger(worldsToFill.size());
+        for (World world : worldsToFill) {
+            ConcurrentLinkedDeque<Location> queue = precache.get(world.getName());
+            findSafeLocation(world, location -> {
+                queue.addLast(location);
+                if (remaining.decrementAndGet() == 0) {
+                    filling.set(false);
+                }
+            }, () -> {
+                if (remaining.decrementAndGet() == 0) {
+                    filling.set(false);
+                }
+            });
+        }
     }
 
     public void findSafeLocation(World world, Consumer<Location> onFound, Runnable onFail) {

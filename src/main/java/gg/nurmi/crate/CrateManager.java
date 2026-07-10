@@ -63,6 +63,35 @@ public final class CrateManager {
 
     public void reload() {
         loadTypes();
+        refreshHolograms();
+    }
+
+    // Bound crate holograms only get their text set once at spawn time; push the (possibly newly reloaded)
+    // display name into each already-existing hologram so a language reload doesn't require unbind/rebind.
+    private void refreshHolograms() {
+        if (boundBlocks.isEmpty() || !fancyHologramsAvailable()) {
+            return;
+        }
+        HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+        for (Map.Entry<BlockKey, String> entry : boundBlocks.entrySet()) {
+            CrateType type = types.get(entry.getValue());
+            if (type == null) {
+                continue;
+            }
+            BlockKey key = entry.getKey();
+            World world = Bukkit.getWorld(key.world());
+            if (world == null) {
+                continue;
+            }
+            Location location = new Location(world, key.x(), key.y(), key.z());
+            manager.getHologram(hologramName(key)).ifPresent(hologram ->
+                    plugin.scheduler().runAtLocation(location, () -> {
+                        if (hologram.getData() instanceof TextHologramData textData) {
+                            textData.setText(new ArrayList<>(List.of(type.displayName())));
+                            hologram.forceUpdate();
+                        }
+                    }));
+        }
     }
 
     private void loadTypes() {

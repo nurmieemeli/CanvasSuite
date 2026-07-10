@@ -40,7 +40,7 @@ public final class RtpCommand implements CommandExecutor, TabCompleter {
                 plugin.messages().send(player, "rtp.no-worlds-enabled");
                 return true;
             }
-            new RtpWorldSelectGui(plugin, rtpManager).open(player);
+            new RtpWorldSelectGui(plugin, rtpManager, player).open(player);
             return true;
         }
 

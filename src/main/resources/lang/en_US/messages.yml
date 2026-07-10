@@ -131,6 +131,17 @@ rtp:
   gui-title: "<gradient:#34d399:#10b981><bold>Random Teleport</bold></gradient>"
   gui-cost-lore: "<gray>Cost: <green><price>"
   gui-cost-free-lore: "<gray>Cost: <green>Free"
+  gui-on-cooldown-lore: "<red>On cooldown"
+  gui-insufficient-funds-lore: "<red>Insufficient funds"
+  gui-status-name: "<yellow><bold>Status</bold>"
+  gui-status-ready-lore: "<gray>You can teleport now."
+  gui-status-cooldown-lore: "<gray>Ready in <white><seconds>s</white>."
+  # Keyed by the world's actual Bukkit name (see world-creation.container in config.yml for how that's
+  # derived) - a world with no entry here just shows its raw name in the /rtp GUI.
+  world-names:
+    world: "Overworld"
+    world_nether: "Nether"
+    world_the_end: "The End"
   searching: "<prefix><gray>Searching for a safe location..."
   success: "<prefix><success><green>Teleported to a random location."
   failed: "<prefix><fail><red>Couldn't find a safe location, try again."

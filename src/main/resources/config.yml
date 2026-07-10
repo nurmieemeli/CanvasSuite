@@ -53,27 +53,33 @@ effects:
 
 teleport:
   tpa-request-timeout-seconds: 60
-  teleport-warmup-seconds: 3
+  teleport-warmup-seconds: 5
   cancel-warmup-on-move: true
   home-limit-permission-prefix: "onesmp.home.limit."
   default-home-limit: 3
 
 rtp:
   min-radius: 0
-  max-radius: 5000
+  max-radius: 50000
   cooldown-seconds: 300
   max-attempts: 30
   # A world only shows up in /rtp (GUI or by name) if listed here with enabled: true; each can charge its own fee.
+  # Keys must match the world's actual Bukkit name, not its dimension - by default that's "world_nether"/
+  # "world_the_end" (your level-name plus "_nether"/"_the_end"), not "the_nether"/"the_end". Check your
+  # server's world folder names (or /world list) if your level-name isn't "world".
+  # Display names shown in the /rtp GUI are configured per-language under rtp.world-names in messages.yml,
+  # not here.
   worlds:
     world:
       enabled: true
       cost: 0
-    the_nether:
+    world_nether:
       enabled: true
       cost: 5000
-    the_end:
-      enabled: false
-      cost: 500000
+    world_the_end:
+      enabled: true
+      cost: 50000
+
   avoid-biomes:
     - "minecraft:ocean"
     - "minecraft:deep_ocean"

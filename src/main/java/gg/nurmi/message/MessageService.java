@@ -56,6 +56,12 @@ public final class MessageService {
         return messages.getString(path, path);
     }
 
+    // For dynamically-keyed lookups (e.g. per-world display names) where the key itself isn't a
+    // sensible fallback and the caller has a real default in mind instead.
+    public String raw(String path, String fallback) {
+        return messages.getString(path, fallback);
+    }
+
     public List<String> rawList(String path) {
         return messages.getStringList(path);
     }

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -127,6 +128,30 @@ public final class WorldManager {
 
     public Collection<WorldSettings> listWorlds() {
         return List.copyOf(managed.values());
+    }
+
+    // Unlike listWorlds() (only worlds this plugin created and tracks in worlds.yml), this also surfaces
+    // worlds the server itself loaded (default dimensions, or anything added outside /world create) so
+    // they're at least visible/teleportable - synthesized read-only from live Bukkit state since we never
+    // recorded how they were created.
+    public List<WorldSettings> listAllLoadedWorlds() {
+        List<WorldSettings> all = new ArrayList<>(managed.values());
+        for (World world : Bukkit.getWorlds()) {
+            if (!managed.containsKey(world.getName())) {
+                all.add(synthesizeSettings(world));
+            }
+        }
+        return all;
+    }
+
+    public boolean isManaged(String name) {
+        return managed.containsKey(name);
+    }
+
+    private WorldSettings synthesizeSettings(World world) {
+        return new WorldSettings(world.getName(), world.getEnvironment(), world.getWorldType(),
+                GeneratorMode.VANILLA, world.getSeed(), world.canGenerateStructures(), world.isHardcore(),
+                world.getDifficulty(), world.getGameRuleValue(GameRules.PVP));
     }
 
     public WorldSettings getSettings(String name) {

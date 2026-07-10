@@ -18,7 +18,7 @@ public final class WorldListGui extends AbstractGui {
     public WorldListGui(OneSMPPlugin plugin, WorldManager worldManager, int page) {
         super(plugin, plugin.messages().text("world.gui-list-title"), 6);
 
-        List<WorldSettings> worlds = List.copyOf(worldManager.listWorlds());
+        List<WorldSettings> worlds = worldManager.listAllLoadedWorlds();
         Pagination<WorldSettings> pagination = new Pagination<>(worlds, PAGE_SIZE);
         List<WorldSettings> pageWorlds = pagination.page(page);
 

@@ -129,6 +129,7 @@ public final class OneSMPPlugin extends JavaPlugin {
     private HelpManager helpManager;
     private VoteManager voteManager;
     private Expansion votePlaceholderExpansion;
+    private LeaderboardHologramManager leaderboardHologramManager;
 
     @Override
     public void onEnable() {
@@ -188,6 +189,9 @@ public final class OneSMPPlugin extends JavaPlugin {
         subcommandAliases.load();
         maintenanceManager.sync();
         helpManager.load();
+        if (leaderboardHologramManager != null) {
+            leaderboardHologramManager.refreshAll();
+        }
     }
 
     private void registerStats() {
@@ -218,12 +222,12 @@ public final class OneSMPPlugin extends JavaPlugin {
                     + "Install FancyHolograms to enable /statshologram.");
         }
 
-        LeaderboardHologramManager hologramManager = available ? new LeaderboardHologramManager(this) : null;
-        Objects.requireNonNull(getCommand("statshologram")).setExecutor(new LeaderboardHologramCommand(this, hologramManager));
+        this.leaderboardHologramManager = available ? new LeaderboardHologramManager(this) : null;
+        Objects.requireNonNull(getCommand("statshologram")).setExecutor(new LeaderboardHologramCommand(this, leaderboardHologramManager));
 
         if (available) {
             int periodSeconds = Math.max(5, getConfig().getInt("hologram.refresh-interval-seconds", 30));
-            schedulerUtil.runGlobalRepeating(hologramManager::refreshAll, periodSeconds * 20L, periodSeconds * 20L);
+            schedulerUtil.runGlobalRepeating(leaderboardHologramManager::refreshAll, periodSeconds * 20L, periodSeconds * 20L);
         }
     }
 

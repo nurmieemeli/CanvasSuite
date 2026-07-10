@@ -107,7 +107,7 @@ public final class WorldCommand implements CommandExecutor, TabCompleter {
         }
         String name = args[1];
         World world = worldManager.getWorld(name);
-        if (world == null || worldManager.getSettings(name) == null) {
+        if (world == null) {
             plugin.messages().send(player, "world.not-found", Placeholder.unparsed("name", name));
             return;
         }
@@ -120,9 +120,13 @@ public final class WorldCommand implements CommandExecutor, TabCompleter {
             String prefix = args[0].toLowerCase(Locale.ROOT);
             return plugin.subcommandAliases().labels("world").stream().filter(s -> s.startsWith(prefix)).toList();
         }
-        if (args.length == 2 && List.of("delete", "teleport").contains(plugin.subcommandAliases().resolve("world", args[0]))) {
+        String resolved = plugin.subcommandAliases().resolve("world", args[0]);
+        if (args.length == 2 && ("delete".equals(resolved) || "teleport".equals(resolved))) {
             String prefix = args[1].toLowerCase(Locale.ROOT);
-            return worldManager.listWorlds().stream().map(WorldSettings::name)
+            List<WorldSettings> candidates = "delete".equals(resolved)
+                    ? List.copyOf(worldManager.listWorlds())
+                    : worldManager.listAllLoadedWorlds();
+            return candidates.stream().map(WorldSettings::name)
                     .filter(n -> n.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();
         }
         return List.of();

@@ -22,10 +22,14 @@ import java.util.function.BiConsumer;
 
 public abstract class AbstractGui implements InventoryHolder {
 
-    protected static final int PAGE_SIZE = 45;
-    private static final int PREV_SLOT = 48;
-    private static final int CLOSE_SLOT = 49;
-    private static final int NEXT_SLOT = 50;
+    // The last row is always reserved for the footer (close/prev/next, plus whatever a subclass adds),
+    // so a page's usable capacity is every row above it. Both this and the footer button slots scale
+    // with whatever row count a subclass actually asks for, rather than assuming a fixed 6-row inventory.
+    protected final int PAGE_SIZE;
+    protected final int footerRowStart;
+    private final int prevSlot;
+    private final int closeSlot;
+    private final int nextSlot;
 
     private final OneSMPPlugin plugin;
     private final Inventory inventory;
@@ -35,6 +39,11 @@ public abstract class AbstractGui implements InventoryHolder {
     protected AbstractGui(OneSMPPlugin plugin, Component title, int rows) {
         this.plugin = plugin;
         this.inventory = Bukkit.createInventory(this, rows * 9, title);
+        this.footerRowStart = (rows - 1) * 9;
+        this.PAGE_SIZE = footerRowStart;
+        this.prevSlot = footerRowStart + 3;
+        this.closeSlot = footerRowStart + 4;
+        this.nextSlot = footerRowStart + 5;
     }
 
     @Override @NonNull
@@ -97,11 +106,11 @@ public abstract class AbstractGui implements InventoryHolder {
 
     protected void addPaginationFooter(Pagination<?> pagination, int page, BiConsumer<Player, Integer> onNavigate) {
         ItemStack close = new ItemBuilder(Material.BARRIER).name(plugin.messages().text("gui.close")).build();
-        setButton(CLOSE_SLOT, close, event -> event.getWhoClicked().closeInventory());
+        setButton(closeSlot, close, event -> event.getWhoClicked().closeInventory());
 
         if (page > 0) {
             ItemStack prev = new ItemBuilder(Material.PAPER).name(plugin.messages().text("gui.previous-page")).build();
-            setButton(PREV_SLOT, prev, event -> {
+            setButton(prevSlot, prev, event -> {
                 if (event.getWhoClicked() instanceof Player player) {
                     onNavigate.accept(player, page - 1);
                 }
@@ -109,7 +118,7 @@ public abstract class AbstractGui implements InventoryHolder {
         }
         if (page < pagination.pageCount() - 1) {
             ItemStack next = new ItemBuilder(Material.PAPER).name(plugin.messages().text("gui.next-page")).build();
-            setButton(NEXT_SLOT, next, event -> {
+            setButton(nextSlot, next, event -> {
                 if (event.getWhoClicked() instanceof Player player) {
                     onNavigate.accept(player, page + 1);
                 }

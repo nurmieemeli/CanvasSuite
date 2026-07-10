@@ -10,6 +10,21 @@ public final class WorldPaths {
         if (container == null || container.isBlank()) {
             return worldName;
         }
+        String normalized = normalize(container);
+        return normalized.isEmpty() ? worldName : normalized + "/" + worldName;
+    }
+
+    // Reverses resolve(): strips the container prefix off a Bukkit world name so it can be matched
+    // against the logical name admins actually configure (e.g. in rtp.worlds).
+    public static String strip(String container, String storedName) {
+        if (container == null || container.isBlank()) {
+            return storedName;
+        }
+        String prefix = normalize(container) + "/";
+        return storedName.startsWith(prefix) ? storedName.substring(prefix.length()) : storedName;
+    }
+
+    private static String normalize(String container) {
         String normalized = container.replace('\\', '/');
         int start = 0;
         int end = normalized.length();
@@ -19,7 +34,6 @@ public final class WorldPaths {
         while (end > start && normalized.charAt(end - 1) == '/') {
             end--;
         }
-        normalized = normalized.substring(start, end);
-        return normalized.isEmpty() ? worldName : normalized + "/" + worldName;
+        return normalized.substring(start, end);
     }
 }

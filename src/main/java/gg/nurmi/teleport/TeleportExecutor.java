@@ -20,15 +20,25 @@ public final class TeleportExecutor {
     }
 
     public void execute(Player player, Location destination, String successMessageKey) {
+        execute(player, destination, successMessageKey, () -> {}, () -> {});
+    }
+
+    // onSuccess fires only once the teleport actually lands; onCancelled fires for every way it can
+    // instead fail to happen (combat block, warmup interrupted/cancelled, or teleportAsync itself
+    // failing) - callers with a side effect tied to "the teleport actually happens" (e.g. RTP's cost
+    // and cooldown) hook into these instead of guessing which case to handle or applying eagerly.
+    public void execute(Player player, Location destination, String successMessageKey, Runnable onSuccess, Runnable onCancelled) {
         if (destination == null) {
             plugin.messages().send(player, "teleport.destination-unavailable");
+            onCancelled.run();
             return;
         }
         if (isInCombat(player)) {
             plugin.messages().send(player, "teleport.in-combat");
+            onCancelled.run();
             return;
         }
-        warmup.start(player, () -> teleportNow(player, destination, successMessageKey));
+        warmup.start(player, () -> teleportNow(player, destination, successMessageKey, onSuccess, onCancelled), onCancelled);
     }
 
     private boolean isInCombat(Player player) {
@@ -39,7 +49,7 @@ public final class TeleportExecutor {
         return plugin.attackerTracker().recentAttacker(player.getUniqueId(), windowMillis) != null;
     }
 
-    private void teleportNow(Player player, Location destination, String successMessageKey) {
+    private void teleportNow(Player player, Location destination, String successMessageKey, Runnable onSuccess, Runnable onCancelled) {
         Location origin = player.getLocation();
         player.teleportAsync(destination).thenAccept(success -> {
             if (success) {
@@ -47,6 +57,9 @@ public final class TeleportExecutor {
                 plugin.scheduler().runAtLocation(origin, () -> plugin.effects().teleport(origin));
                 plugin.effects().teleport(player.getLocation());
                 plugin.messages().send(player, successMessageKey);
+                onSuccess.run();
+            } else {
+                onCancelled.run();
             }
         });
     }
@@ -57,6 +70,10 @@ public final class TeleportExecutor {
 
     public void executeSafely(Player player, Location destination, String successMessageKey) {
         plugin.scheduler().runAtEntity(player, () -> execute(player, destination, successMessageKey), () -> {});
+    }
+
+    public void executeSafely(Player player, Location destination, String successMessageKey, Runnable onSuccess, Runnable onCancelled) {
+        plugin.scheduler().runAtEntity(player, () -> execute(player, destination, successMessageKey, onSuccess, onCancelled), onCancelled);
     }
 
     public void teleportToPlayerLocation(Player toTeleport, Player destinationOwner) {

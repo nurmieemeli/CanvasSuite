@@ -46,19 +46,24 @@ public final class WorldDetailGui extends AbstractGui {
             }
         });
 
-        setButton(DELETE_SLOT, new ItemBuilder(Material.TNT)
-                .name(plugin.messages().text("world.gui-delete-button"))
-                .lore(plugin.messages().text("world.gui-delete-lore"))
-                .build(), event -> {
-            if (event.getWhoClicked() instanceof Player player) {
-                player.closeInventory();
-                worldManager.deleteWorld(worldName, false, success -> {
-                    if (success) {
-                        plugin.messages().send(player, "world.deleted", Placeholder.unparsed("name", worldName));
-                    }
-                });
-            }
-        });
+        // Only worlds this plugin created are safe to unload/delete here - a world the server loaded on
+        // its own (default dimensions, or anything added outside /world create) has no tracked settings
+        // to restore and may be load-bearing (e.g. the primary world), so it gets no delete button.
+        if (worldManager.isManaged(worldName)) {
+            setButton(DELETE_SLOT, new ItemBuilder(Material.TNT)
+                    .name(plugin.messages().text("world.gui-delete-button"))
+                    .lore(plugin.messages().text("world.gui-delete-lore"))
+                    .build(), event -> {
+                if (event.getWhoClicked() instanceof Player player) {
+                    player.closeInventory();
+                    worldManager.deleteWorld(worldName, false, success -> {
+                        if (success) {
+                            plugin.messages().send(player, "world.deleted", Placeholder.unparsed("name", worldName));
+                        }
+                    });
+                }
+            });
+        }
 
         setButton(BACK_SLOT, new ItemBuilder(Material.ARROW)
                 .name(plugin.messages().text("gui.back"))
