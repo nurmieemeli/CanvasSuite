@@ -36,7 +36,7 @@ categories:
         title: "<white>Combat & Disconnecting"
         body:
           - "Don't log out mid-fight — disconnecting shortly after being hit kills you instead of letting you escape safely."
-          - "That same window also blocks teleporting away (homes, warps, RTP, TPA) until it passes."
+          - "That same window also blocks teleporting away (homes, RTP, TPA) until it passes."
   economy:
     display-name: "<gold>Economy"
     icon: GOLD_INGOT
@@ -61,17 +61,13 @@ categories:
   teleport:
     display-name: "<aqua>Teleportation"
     icon: ENDER_PEARL
-    description: "Homes, warps, and getting to other players."
+    description: "Homes and getting to other players."
     articles:
       homes:
         title: "<white>Homes"
         body:
           - "<white>/sethome [name]</white> saves a home at your location."
           - "<white>/home [name]</white> teleports you there; <white>/delhome <name></white> removes it."
-      warps:
-        title: "<white>Warps"
-        body:
-          - "<white>/warp [name]</white> teleports to a server warp, or lists them with no name given."
       tpa:
         title: "<white>Player Requests"
         body:

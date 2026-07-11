@@ -36,7 +36,7 @@ categories:
         title: "<white>Strid & Uppkopplingsavbrott"
         body:
           - "Logga inte ut mitt i en strid — om du kopplar från strax efter att ha blivit träffad dödar det dig istället för att låta dig fly säkert."
-          - "Samma tidsfönster blockerar också teleportering (hem, warps, RTP, TPA) tills det har gått över."
+          - "Samma tidsfönster blockerar också teleportering (hem, RTP, TPA) tills det har gått över."
   economy:
     display-name: "<gold>Ekonomi"
     icon: GOLD_INGOT
@@ -61,17 +61,13 @@ categories:
   teleport:
     display-name: "<aqua>Teleportering"
     icon: ENDER_PEARL
-    description: "Hem, warps och att ta sig till andra spelare."
+    description: "Hem och att ta sig till andra spelare."
     articles:
       homes:
         title: "<white>Hem"
         body:
           - "<white>/sethome [name]</white> sparar ett hem på din plats."
           - "<white>/home [name]</white> teleporterar dig dit; <white>/delhome <name></white> tar bort det."
-      warps:
-        title: "<white>Warps"
-        body:
-          - "<white>/warp [name]</white> teleporterar till en serverwarp, eller listar dem om inget namn anges."
       tpa:
         title: "<white>Spelarförfrågningar"
         body:

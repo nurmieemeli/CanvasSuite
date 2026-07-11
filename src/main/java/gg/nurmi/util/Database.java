@@ -108,19 +108,6 @@ public final class Database {
                 """.formatted(idType));
 
             statement.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS warps (
-                    name VARCHAR(32) PRIMARY KEY,
-                    world VARCHAR(64) NOT NULL,
-                    x DOUBLE NOT NULL,
-                    y DOUBLE NOT NULL,
-                    z DOUBLE NOT NULL,
-                    yaw FLOAT NOT NULL,
-                    pitch FLOAT NOT NULL,
-                    created_by VARCHAR(36)
-                )
-                """);
-
-            statement.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS guilds (
                     id %s,
                     name VARCHAR(32) NOT NULL UNIQUE,

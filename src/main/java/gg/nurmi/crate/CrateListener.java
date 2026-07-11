@@ -94,6 +94,13 @@ public final class CrateListener implements Listener {
         player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, effectLocation, 30, 0.3, 0.3, 0.3, 0.05);
 
         CrateReward reward = crateManager.rollReward(type);
+        if (reward.money() > 0) {
+            // Force the key's removal to disk now - the money deposit at the end of the opening animation
+            // (CrateManager.grantReward) commits to the database almost instantly, while this in-memory
+            // removal would otherwise only reach disk on the next periodic autosave. A crash in that gap
+            // would restore the key from a stale save after the money was already durably paid out.
+            player.saveData();
+        }
         CrateOpeningGui gui = new CrateOpeningGui(plugin, crateManager, type, reward);
         gui.open(player);
         gui.start(player);

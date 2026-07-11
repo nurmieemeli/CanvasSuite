@@ -117,6 +117,10 @@ spawn:
   z: 0.5
   yaw: 0.0
   pitch: 0.0
+  # How often (in ticks) to check whether a player who died without a bed/anchor has respawned yet and needs
+  # redirecting to the spawn world. PlayerRespawnEvent/PlayerPostRespawnEvent don't reliably fire on this
+  # platform, so this poll is the actual mechanism, not just a safety net.
+  respawn-check-interval-ticks: 4
 
 # Overhead nametag prefixes via PacketEvents team packets only - no real scoreboard team is ever registered. Requires PacketEvents, silently disabled otherwise.
 nametag:
@@ -128,6 +132,11 @@ nametag:
     format: "<dark_aqua>[<aqua><guild_tag></aqua>]</dark_aqua>"
     # How far above the mount point the line floats - a generic passenger has no defined seat height like a horse/boat.
     y-offset: 0.55
+    # IMPORTANT: the tag entity is mounted as the player's passenger for smooth free-following. Vanilla exempts
+    # any entity carrying a passenger from normal entity-vs-entity push collision, which silently breaks player
+    # collision for anyone with a guild tag - this ONLY works correctly if paper-world-defaults.yml has
+    # collisions.only-players-collide AND collisions.allow-vehicle-collisions both set to true. See the
+    # onesmp-player-collision-api memory/notes if collision breaks for guild-tagged players again.
     # Re-sent periodically since it's a cheap packet, guarding against the passenger mount desyncing client-side.
     remount-interval-ticks: 20
     # How often each guild-tagged online player's actual world is checked against the tag entity's last
@@ -195,7 +204,7 @@ combat-log:
   # killed instead of safely logging out of the fight. Goes through the normal damage pipeline, so a totem of
   # undying/resistance/absorption still applies as it would for any hit.
   timeout-seconds: 15
-  # Blocks /home, /warp, /spawn, /rtp, guild home, world teleports, and TPA (both accepting one yourself
+  # Blocks /home, /spawn, /rtp, guild home, world teleports, and TPA (both accepting one yourself
   # and having someone else accept a request that would bring them to you) for the same window above -
   # independent of the enabled/kill-on-quit setting.
   disable-teleport: true

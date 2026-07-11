@@ -36,7 +36,7 @@ categories:
         title: "<white>Kampf & Verbindungsabbruch"
         body:
           - "Verlasse den Server nicht mitten im Kampf — wer sich kurz nach einem Treffer trennt, wird getötet, anstatt sicher zu entkommen."
-          - "Dasselbe Zeitfenster blockiert auch das Teleportieren (Zuhause, Warps, RTP, TPA), bis es vorüber ist."
+          - "Dasselbe Zeitfenster blockiert auch das Teleportieren (Zuhause, RTP, TPA), bis es vorüber ist."
   economy:
     display-name: "<gold>Wirtschaft"
     icon: GOLD_INGOT
@@ -61,17 +61,13 @@ categories:
   teleport:
     display-name: "<aqua>Teleportation"
     icon: ENDER_PEARL
-    description: "Zuhause, Warps und wie du zu anderen Spielern kommst."
+    description: "Zuhause und wie du zu anderen Spielern kommst."
     articles:
       homes:
         title: "<white>Zuhause"
         body:
           - "<white>/sethome [name]</white> speichert ein Zuhause an deinem Standort."
           - "<white>/home [name]</white> teleportiert dich dorthin; <white>/delhome <name></white> entfernt es."
-      warps:
-        title: "<white>Warps"
-        body:
-          - "<white>/warp [name]</white> teleportiert zu einem Server-Warp, oder listet sie auf, wenn kein Name angegeben wird."
       tpa:
         title: "<white>Spieleranfragen"
         body:

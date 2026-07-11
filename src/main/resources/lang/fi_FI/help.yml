@@ -36,7 +36,7 @@ categories:
         title: "<white>Taistelu ja Yhteyden Katkaiseminen"
         body:
           - "Älä poistu pelistä kesken taistelun — yhteyden katkaiseminen pian osuman jälkeen tappaa sinut sen sijaan, että pääsisit turvallisesti pakoon."
-          - "Sama ajanjakso estää myös siirtymisen pois (kodit, warpit, RTP, TPA), kunnes se päättyy."
+          - "Sama ajanjakso estää myös siirtymisen pois (kodit, RTP, TPA), kunnes se päättyy."
   economy:
     display-name: "<gold>Talous"
     icon: GOLD_INGOT
@@ -61,17 +61,13 @@ categories:
   teleport:
     display-name: "<aqua>Siirtyminen"
     icon: ENDER_PEARL
-    description: "Kodit, warpit ja muiden pelaajien luo siirtyminen."
+    description: "Kodit ja muiden pelaajien luo siirtyminen."
     articles:
       homes:
         title: "<white>Kodit"
         body:
           - "<white>/sethome [name]</white> tallentaa kodin sijaintiisi."
           - "<white>/home [name]</white> siirtää sinut sinne; <white>/delhome <name></white> poistaa sen."
-      warps:
-        title: "<white>Warpit"
-        body:
-          - "<white>/warp [name]</white> siirtää palvelimen warppiin, tai listaa ne jos nimeä ei anneta."
       tpa:
         title: "<white>Pelaajapyynnöt"
         body:

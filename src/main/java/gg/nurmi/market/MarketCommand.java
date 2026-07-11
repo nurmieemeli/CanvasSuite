@@ -115,6 +115,14 @@ public final class MarketCommand implements CommandExecutor, TabCompleter {
 
                     ItemStack listed = current.clone();
                     player.getInventory().setItemInMainHand(null);
+                    // Force this removal to the player's data file NOW, synchronously - otherwise it only
+                    // exists in memory until the next periodic autosave, while the listing insert below
+                    // commits to the database almost instantly. A hard crash in that gap would restore the
+                    // item from a stale save while the listing survives in the DB, duplicating it. Paying
+                    // this I/O cost here (rare, cooldown-gated action) closes that window: a crash can now
+                    // only land before both are durable (item lost, listing never created - not exploitable)
+                    // or after both are durable (consistent), never "listing exists, item still there too".
+                    player.saveData();
 
                     marketManager.create(player, listed, finalPrice).thenAccept(listing ->
                             plugin.scheduler().runAtEntity(player, () -> plugin.messages().send(player, "market.listed",

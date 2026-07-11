@@ -94,6 +94,10 @@ public final class GuildMainGui extends AbstractGui {
             ItemStack setHomeIcon = new ItemBuilder(Material.COMPASS).name(plugin.messages().text("guild.gui-set-home-button")).build();
             setButton(SET_HOME_SLOT, setHomeIcon, event -> {
                 if (event.getWhoClicked() instanceof Player player) {
+                    if (plugin.spawnWorld().isVoidWorld(player.getWorld())) {
+                        plugin.messages().send(player, "guild.home-spawn-world-disallowed");
+                        return;
+                    }
                     guildManager.setHome(guild.id(), player.getLocation()).thenRun(() -> plugin.messages().send(player, "guild.home-set"));
                 }
             });

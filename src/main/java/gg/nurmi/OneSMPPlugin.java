@@ -56,8 +56,10 @@ import gg.nurmi.teleport.rtp.RtpManager;
 import gg.nurmi.util.SchedulerUtil;
 import gg.nurmi.shop.SellCommand;
 import gg.nurmi.shop.ShopManager;
+import gg.nurmi.collision.PlayerCollisionListener;
+import gg.nurmi.collision.PlayerCollisionManager;
 import gg.nurmi.spawn.FirstJoinListener;
-import gg.nurmi.spawn.PlayerRespawnListener;
+import gg.nurmi.spawn.RespawnRedirectListener;
 import gg.nurmi.spawn.SetSpawnCommand;
 import gg.nurmi.spawn.SpawnCommand;
 import gg.nurmi.spawn.SpawnWorldManager;
@@ -73,19 +75,15 @@ import gg.nurmi.util.Database;
 import gg.nurmi.tablist.TablistListener;
 import gg.nurmi.tablist.TablistManager;
 import gg.nurmi.teleport.DelHomeCommand;
-import gg.nurmi.teleport.DelWarpCommand;
 import gg.nurmi.teleport.HomeCommand;
 import gg.nurmi.teleport.HomeManager;
 import gg.nurmi.teleport.SetHomeCommand;
-import gg.nurmi.teleport.SetWarpCommand;
 import gg.nurmi.teleport.TeleportExecutor;
 import gg.nurmi.teleport.TeleportWarmup;
 import gg.nurmi.teleport.TpAcceptCommand;
 import gg.nurmi.teleport.TpDenyCommand;
 import gg.nurmi.teleport.TpaCommand;
 import gg.nurmi.teleport.TpaManager;
-import gg.nurmi.teleport.WarpCommand;
-import gg.nurmi.teleport.WarpManager;
 import gg.nurmi.vote.VoteCommand;
 import gg.nurmi.vote.VoteListener;
 import gg.nurmi.vote.VoteManager;
@@ -95,6 +93,7 @@ import gg.nurmi.world.WorldCommand;
 import gg.nurmi.world.WorldManager;
 import io.github.miniplaceholders.api.Expansion;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -102,7 +101,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class OneSMPPlugin extends JavaPlugin {
-
+    
     private SchedulerUtil schedulerUtil;
     private Database database;
     private EffectsManager effectsManager;
@@ -162,6 +161,7 @@ public final class OneSMPPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatFormatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinLeaveMessageListener(this), this);
         registerSpawn();
+        registerCollision();
         registerWorlds();
         registerMessaging();
         registerNametags();
@@ -312,7 +312,20 @@ public final class OneSMPPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FirstJoinListener(this, spawnWorldManager), this);
         getServer().getPluginManager().registerEvents(new VoidWorldListener(spawnWorldManager), this);
         getServer().getPluginManager().registerEvents(new VoidFallRescueListener(spawnWorldManager), this);
-        getServer().getPluginManager().registerEvents(new PlayerRespawnListener(this, spawnWorldManager), this);
+        RespawnRedirectListener respawnListener = new RespawnRedirectListener(this, spawnWorldManager);
+        getServer().getPluginManager().registerEvents(respawnListener, this);
+        int respawnCheckTicks = Math.max(1, getConfig().getInt("spawn.respawn-check-interval-ticks", 4));
+        schedulerUtil.runGlobalRepeating(respawnListener::checkPendingRespawns, respawnCheckTicks, respawnCheckTicks);
+    }
+
+    private void registerCollision() {
+        PlayerCollisionManager collisionManager = new PlayerCollisionManager(this);
+        collisionManager.ensureTeamExists();
+        getServer().getPluginManager().registerEvents(new PlayerCollisionListener(collisionManager), this);
+        // Covers players already online across a /reload - PlayerJoinEvent won't fire for them.
+        for (Player player : getServer().getOnlinePlayers()) {
+            collisionManager.disableCollision(player);
+        }
     }
 
     private void registerRtp() {
@@ -338,7 +351,6 @@ public final class OneSMPPlugin extends JavaPlugin {
 
     private void registerTeleport() {
         HomeManager homeManager = new HomeManager(this);
-        WarpManager warpManager = new WarpManager(this);
         TpaManager tpaManager = new TpaManager(this);
         TeleportWarmup warmup = new TeleportWarmup(this);
         this.teleportExecutor = new TeleportExecutor(this, warmup);
@@ -346,10 +358,6 @@ public final class OneSMPPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("sethome")).setExecutor(new SetHomeCommand(this, homeManager));
         Objects.requireNonNull(getCommand("home")).setExecutor(new HomeCommand(this, homeManager, teleportExecutor));
         Objects.requireNonNull(getCommand("delhome")).setExecutor(new DelHomeCommand(this, homeManager));
-
-        Objects.requireNonNull(getCommand("setwarp")).setExecutor(new SetWarpCommand(this, warpManager));
-        Objects.requireNonNull(getCommand("warp")).setExecutor(new WarpCommand(this, warpManager, teleportExecutor));
-        Objects.requireNonNull(getCommand("delwarp")).setExecutor(new DelWarpCommand(this, warpManager));
 
         Objects.requireNonNull(getCommand("tpa")).setExecutor(new TpaCommand(this, tpaManager, false));
         Objects.requireNonNull(getCommand("tpahere")).setExecutor(new TpaCommand(this, tpaManager, true));

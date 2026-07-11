@@ -42,15 +42,6 @@ commands:
   delhome:
     description: Delete one of your homes.
     usage: /delhome <name>
-  setwarp:
-    description: Create a server warp at your current location.
-    usage: /setwarp <name>
-  warp:
-    description: Teleport to a warp, or list warps.
-    usage: /warp [name]
-  delwarp:
-    description: Delete a server warp.
-    usage: /delwarp <name>
   tpa:
     description: Request to teleport to a player.
     usage: /tpa <player>
@@ -127,7 +118,6 @@ permissions:
     default: op
     children:
       onesmp.economy.admin: true
-      onesmp.warp.admin: true
       onesmp.guild.admin: true
       onesmp.rtp.admin: true
       onesmp.spawn.admin: true
@@ -143,8 +133,6 @@ permissions:
   onesmp.crate.admin: { default: op }
   onesmp.home.use: { default: true }
   onesmp.home.unlimited: { default: false }
-  onesmp.warp.use: { default: true }
-  onesmp.warp.admin: { default: op }
   onesmp.tpa.use: { default: true }
   onesmp.rtp.use: { default: true }
   onesmp.rtp.admin: { default: op }

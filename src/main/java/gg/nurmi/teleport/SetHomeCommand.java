@@ -28,6 +28,10 @@ public final class SetHomeCommand implements CommandExecutor {
             plugin.messages().send(sender, "general.no-permission");
             return true;
         }
+        if (plugin.spawnWorld().isVoidWorld(player.getWorld())) {
+            plugin.messages().send(player, "teleport.home-spawn-world-disallowed");
+            return true;
+        }
 
         String name = args.length > 0 ? args[0] : "home";
         int limit = homeManager.resolveLimit(player);

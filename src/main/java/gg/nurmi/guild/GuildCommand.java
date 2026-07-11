@@ -273,6 +273,10 @@ public final class GuildCommand implements CommandExecutor, TabCompleter {
                 plugin.messages().send(player, "guild.no-permission-role");
                 return;
             }
+            if (plugin.spawnWorld().isVoidWorld(player.getWorld())) {
+                plugin.messages().send(player, "guild.home-spawn-world-disallowed");
+                return;
+            }
             guildManager.setHome(guild.id(), player.getLocation()).thenRun(() ->
                     plugin.messages().send(player, "guild.home-set"));
         });

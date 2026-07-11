@@ -36,7 +36,7 @@ categories:
         title: "<white>Combate y Desconexión"
         body:
           - "No cierres sesión en mitad de una pelea — desconectarte poco después de recibir un golpe te matará en lugar de dejarte escapar a salvo."
-          - "Esa misma ventana de tiempo también bloquea teletransportarte (hogares, teletransportes, RTP, TPA) hasta que pase."
+          - "Esa misma ventana de tiempo también bloquea teletransportarte (hogares, RTP, TPA) hasta que pase."
   economy:
     display-name: "<gold>Economía"
     icon: GOLD_INGOT
@@ -61,17 +61,13 @@ categories:
   teleport:
     display-name: "<aqua>Teletransporte"
     icon: ENDER_PEARL
-    description: "Hogares, teletransportes y cómo llegar hasta otros jugadores."
+    description: "Hogares y cómo llegar hasta otros jugadores."
     articles:
       homes:
         title: "<white>Hogares"
         body:
           - "<white>/sethome [name]</white> guarda un hogar en tu ubicación."
           - "<white>/home [name]</white> te teletransporta allí; <white>/delhome <name></white> lo elimina."
-      warps:
-        title: "<white>Teletransportes"
-        body:
-          - "<white>/warp [name]</white> te teletransporta a un punto del servidor, o los lista si no indicas ningún nombre."
       tpa:
         title: "<white>Solicitudes entre Jugadores"
         body:

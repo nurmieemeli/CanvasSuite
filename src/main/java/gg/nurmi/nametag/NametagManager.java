@@ -17,6 +17,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.OptionData;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.ScoreBoardTeamInfo;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams.TeamMode;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import gg.nurmi.OneSMPPlugin;
 import gg.nurmi.guild.Guild;
 import net.kyori.adventure.text.Component;
@@ -25,6 +26,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public final class NametagManager {
             }
             Component prefix = lastSent.get(other.getUniqueId());
             if (prefix != null) {
-                sendPacketTo(joined, buildPacket(other, prefix, TeamMode.CREATE));
+                sendPacketTo(joined, buildPrefixTeamPacket(other, prefix, TeamMode.CREATE));
             }
 
             GuildTagState state = guildTagState.get(other.getUniqueId());
@@ -87,7 +89,7 @@ public final class NametagManager {
 
         GuildTagState state = guildTagState.remove(left.getUniqueId());
         if (state != null) {
-            destroyGuildTagEntity(state.entityId());
+            destroyGuildTagEntity(state.entityId(), state.world());
         }
     }
 
@@ -124,7 +126,7 @@ public final class NametagManager {
         UUID uuid = player.getUniqueId();
         GuildTagState existing = guildTagState.get(uuid);
         if (existing != null) {
-            destroyGuildTagEntity(existing.entityId());
+            destroyGuildTagEntity(existing.entityId(), existing.world());
         }
         int newId = fakeEntityIdCounter.decrementAndGet();
         UUID displayUuid = UUID.randomUUID();
@@ -142,7 +144,7 @@ public final class NametagManager {
             Component previous = lastSent.put(player.getUniqueId(), prefix);
             boolean firstTime = previous == null;
             if (firstTime || !previous.equals(prefix)) {
-                WrapperPlayServerTeams packet = buildPacket(player, prefix, firstTime ? TeamMode.CREATE : TeamMode.UPDATE);
+                WrapperPlayServerTeams packet = buildPrefixTeamPacket(player, prefix, firstTime ? TeamMode.CREATE : TeamMode.UPDATE);
                 for (Player viewer : Bukkit.getOnlinePlayers()) {
                     sendPacketTo(viewer, packet);
                 }
@@ -164,28 +166,44 @@ public final class NametagManager {
         }
     }
 
+    // The tag entity is mounted as the player's passenger for free, smooth client-side following - this
+    // requires collisions.only-players-collide + collisions.allow-vehicle-collisions in paper-world-defaults.yml
+    // to both be true, otherwise a player carrying any passenger (fake or real) is silently exempted from
+    // normal entity-vs-entity push collision by vanilla's vehicle-collision rule. See [[onesmp-player-collision-api]].
     // Passenger mounts can silently desync client-side over time; periodically re-sending the mount packet is cheap insurance.
     public void reassertMounts() {
         if (!plugin.packetEvents().available() || guildTagState.isEmpty()) {
             return;
         }
         for (Map.Entry<UUID, GuildTagState> entry : guildTagState.entrySet()) {
-            try {
-                Player owner = Bukkit.getPlayer(entry.getKey());
-                if (owner != null) {
-                    sendMount(owner, entry.getValue().entityId());
-                }
-            } catch (Exception ex) {
-                plugin.getLogger().log(Level.WARNING, "Failed to reassert guild-tag mount for " + entry.getKey(), ex);
+            Player owner = Bukkit.getPlayer(entry.getKey());
+            if (owner == null) {
+                continue;
             }
+            int entityId = entry.getValue().entityId();
+            plugin.scheduler().runAtEntity(owner, () -> {
+                try {
+                    sendMount(owner, entityId);
+                } catch (Exception ex) {
+                    plugin.getLogger().log(Level.WARNING, "Failed to reassert guild-tag mount for " + owner.getName(), ex);
+                }
+            }, () -> {});
         }
     }
 
     private void sendMount(Player owner, int fakeEntityId) {
         WrapperPlayServerSetPassengers mount = new WrapperPlayServerSetPassengers(owner.getEntityId(), new int[]{fakeEntityId});
+        sendToViewersInWorld(owner.getWorld(), mount);
+    }
+
+    // Guild tags are only ever visible to players standing in the same world as the owner, so there's no
+    // point paying packet cost broadcasting position/spawn/text updates to everyone online.
+    private void sendToViewersInWorld(World world, PacketWrapper<?> packet) {
         PlayerManager playerManager = PacketEvents.getAPI().getPlayerManager();
         for (Player viewer : Bukkit.getOnlinePlayers()) {
-            playerManager.sendPacket(viewer, mount);
+            if (viewer.getWorld().equals(world)) {
+                playerManager.sendPacket(viewer, packet);
+            }
         }
     }
 
@@ -203,7 +221,7 @@ public final class NametagManager {
         if (tag == null) {
             GuildTagState removed = guildTagState.remove(uuid);
             if (removed != null) {
-                destroyGuildTagEntity(removed.entityId());
+                destroyGuildTagEntity(removed.entityId(), removed.world());
             }
             return;
         }
@@ -219,7 +237,7 @@ public final class NametagManager {
 
         if (!rendered.equals(existing.tag())) {
             guildTagState.put(uuid, new GuildTagState(existing.entityId(), existing.displayUuid(), rendered, existing.world()));
-            sendTextUpdate(existing.entityId(), rendered);
+            sendTextUpdate(existing.entityId(), rendered, player.getWorld());
         }
     }
 
@@ -230,6 +248,9 @@ public final class NametagManager {
         WrapperPlayServerSetPassengers mount = new WrapperPlayServerSetPassengers(owner.getEntityId(), new int[]{entityId});
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
+            if (!viewer.getWorld().equals(location.getWorld())) {
+                continue;
+            }
             playerManager.sendPacket(viewer, spawn);
             playerManager.sendPacket(viewer, metaPacket);
             playerManager.sendPacket(viewer, mount);
@@ -260,27 +281,33 @@ public final class NametagManager {
         return list;
     }
 
-    private void sendTextUpdate(int entityId, Component text) {
+    private void sendTextUpdate(int entityId, Component text, World world) {
         List<EntityData<?>> metadata = new ArrayList<>();
         metadata.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT, text));
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(entityId, metadata);
-        PlayerManager playerManager = PacketEvents.getAPI().getPlayerManager();
-        for (Player viewer : Bukkit.getOnlinePlayers()) {
-            playerManager.sendPacket(viewer, packet);
-        }
+        sendToViewersInWorld(world, new WrapperPlayServerEntityMetadata(entityId, metadata));
     }
 
-    private void destroyGuildTagEntity(int entityId) {
+    private void destroyGuildTagEntity(int entityId, String worldName) {
+        World world = Bukkit.getWorld(worldName);
         WrapperPlayServerDestroyEntities destroy = new WrapperPlayServerDestroyEntities(entityId);
-        PlayerManager playerManager = PacketEvents.getAPI().getPlayerManager();
-        for (Player viewer : Bukkit.getOnlinePlayers()) {
-            playerManager.sendPacket(viewer, destroy);
+        if (world == null) {
+            PlayerManager playerManager = PacketEvents.getAPI().getPlayerManager();
+            for (Player viewer : Bukkit.getOnlinePlayers()) {
+                playerManager.sendPacket(viewer, destroy);
+            }
+            return;
         }
+        sendToViewersInWorld(world, destroy);
     }
 
-    private WrapperPlayServerTeams buildPacket(Player subject, Component prefix, TeamMode mode) {
+    private WrapperPlayServerTeams buildPrefixTeamPacket(Player subject, Component prefix, TeamMode mode) {
+        // This is a fake, packet-only team (no real Bukkit Scoreboard team is ever registered) purely to
+        // display the prefix, but the client can't tell that apart from a real team packet - it must agree
+        // with PlayerCollisionManager's real onesmp_nocollide team (players never collide with anything,
+        // anywhere) or it would silently override that team's rule from other players' clients, since a
+        // client-side entity can only be on one team at a time.
         ScoreBoardTeamInfo info = new ScoreBoardTeamInfo(Component.empty(), prefix, Component.empty(),
-                NameTagVisibility.ALWAYS, CollisionRule.ALWAYS, trailingColor(prefix, NamedTextColor.WHITE), OptionData.NONE);
+                NameTagVisibility.ALWAYS, CollisionRule.NEVER, trailingColor(prefix, NamedTextColor.WHITE), OptionData.NONE);
         List<String> members = mode == TeamMode.CREATE ? List.of(subject.getName()) : List.of();
         return new WrapperPlayServerTeams(teamName(subject), mode, info, members);
     }

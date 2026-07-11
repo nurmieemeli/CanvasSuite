@@ -28,6 +28,12 @@ statshologram:
   create: []
   remove: []
   list: [ls]
+statstop:
+  kills: [убийства]
+  deaths: [смерти]
+  killstreak: [серия]
+  playtime: [времяигры]
+  kd: []
 crate:
   create: [c]
   remove: [удалить, del]

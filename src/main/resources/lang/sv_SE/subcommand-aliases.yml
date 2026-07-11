@@ -28,6 +28,12 @@ statshologram:
   create: []
   remove: []
   list: [ls]
+statstop:
+  kills: []
+  deaths: []
+  killstreak: [svit]
+  playtime: [speltid]
+  kd: []
 crate:
   create: [c]
   remove: [radera, del]
